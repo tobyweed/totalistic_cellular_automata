@@ -13,7 +13,7 @@ public class Automata extends Applet implements ActionListener {
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 28));
 
-        automaton = new Automaton();
+        automaton = new Automaton(3,777);
         setLayout(new BorderLayout());
         add(Automata());
     }
