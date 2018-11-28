@@ -1,7 +1,6 @@
 // Totalistic Cellular Automata Applet
 //
-// CS 201 HW 9
-//Names: Toby Weed & Danny Grubbs-Donovan
+// Toby Weed & Danny Grubbs-Donovan
 
 import java.applet.*;
 import java.awt.*;
@@ -9,9 +8,12 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Automata extends Applet implements ActionListener {
+    protected Automaton automaton;
+
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 28));
 
+        automaton = new Automaton();
         setLayout(new BorderLayout());
         add(Automata());
     }
