@@ -5,26 +5,6 @@ import java.awt.Color;
 import java.lang.Integer;
 
 public class Automaton {
-    public static void main(String[] args){
-        Automaton a = new Automaton(3,777);
-        Cell c = new Cell(2);
-        //Test state printing
-        System.out.println(c.state());
-        //Test averaging
-        System.out.println(avgParentStates(c));
-        //Test generate
-        printGeneration(c);
-        Cell c1 = generate(c);
-        printGeneration(c1);
-        //Test generations
-        Cell[] generations = generations(c, 5);
-        for(Cell g : generations) {
-            printGeneration(g);
-            System.out.println("Generation: ");
-        }
-        //test int to kary
-        System.out.println(intToKAry(40,2));
-    }
     // FIELDS ==============================================================
     int k;
     int ruleCode;
@@ -36,7 +16,7 @@ public class Automaton {
     public Automaton(int kValue, int code) {
         k = kValue;
         ruleCode = code;
-        kAryRuleCode = intToKAry(ruleCode, k);
+        kAryRuleCode = intToKAry(ruleCode);
         //then set other three fields
     };
 

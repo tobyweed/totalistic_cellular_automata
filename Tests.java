@@ -23,6 +23,9 @@ public class Tests {
         //     print(new String(zeros));
         //     assert generations[x].equals(new String(zeros)) : ("Generation " + x + " didn't have " + (1+(x*2)) + " zeros");
         // }
+        //Test intToKAry
+        assert Integer.toString(a.intToKAry(777)).equals("0200221") : "int to KAry code conversion malfunction";
+        print("777 converted to 0200221");
     }
 
     //printing shorthand
