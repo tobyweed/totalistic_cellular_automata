@@ -4,25 +4,6 @@ import java.util.*;
 import java.awt.Color;
 
 public class Automaton {
-    public static void main(String[] args){
-        Automaton a = new Automaton(3,777);
-        Cell c = new Cell(2);
-        //Test state printing
-        System.out.println(c.state());
-        //Test averaging
-        System.out.println(avgParentStates(c));
-        //Test generate
-        printGeneration(c);
-        Cell c1 = generate(c);
-        printGeneration(c1);
-        //Test generations
-        Cell[] generations = generations(c, 5);
-        for(Cell g : generations) {
-            printGeneration(g);
-            System.out.println("Generation: ");
-        }
-    }
-
     // FIELDS ==============================================================
     int k;
     int ruleCode;
@@ -67,7 +48,7 @@ public class Automaton {
     //Return an array of n generations, starting from generation g
     public static Cell[] generations(Cell g, int n){ //later add parameter HashMap rule
         Cell[] generations = new Cell[n];
-        generations[0] = generate(g);
+        generations[0] = g;
         for(int x = 1; x < n; x++) {
             generations[x] = generate(generations[x-1]);
         }
@@ -123,28 +104,33 @@ public class Automaton {
         return total / 3.0;
     }
 
-    //utility method to print a generation with g as the genesis cell
-    public static void printGeneration(Cell g){
+    //utility method to convert generation g into a string
+    public static String g2S(Cell g){
+        String s = "";
         if(g.next() != null) {
-            printLeft(g.next()); //print the cells on the left
-            System.out.println(g.state()); //Print genesis cell
-            printRight(g.next()); //print the cells on the right
+            s += g2SLeft(g.next()); //Concatenate the cells on the left
+            s += g.state(); //Concatenate genesis cell
+            s += g2SRight(g.next()); //Concatenate the cells on the right
         } else {
-            System.out.println(g.state()); //Just print genesis cell
+            s += g.state(); //Just Concatenate genesis cell
         }
+        return s;
     }
 
-    //helper methods to printGeneration
-    public static void printLeft(Cell c){
+    //helper methods to g2S
+    public static String g2SLeft(Cell c){
+        String s = "";
         if(c.next() != null)
-            printLeft(c.next());
-        System.out.println(c.state());
+            s += g2SLeft(c.next());
+        s += c.state();
+        return s;
     }
 
-    public static void printRight(Cell c){
-        System.out.println(c.state());
+    public static String g2SRight(Cell c){
+        String s = "";
+        s += c.state();
         if(c.next() != null)
-            printRight(c.next());
+            s += g2SRight(c.next());
+        return s;
     }
-
 }

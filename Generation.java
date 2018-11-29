@@ -2,6 +2,8 @@
 // value of the center cell and two linked lists of cells extending to the left
 // & right
 
+//THIS CLASS IS NOT CURRENTLY BEING USED
+
 
 public class Generation {
     public static void main(String[] args){
