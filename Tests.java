@@ -1,5 +1,7 @@
 //Unit Tests for automata
 
+import java.util.*;
+
 public class Tests {
     public static void main(String[] args){
         Automaton a = new Automaton(3,777);
@@ -23,10 +25,13 @@ public class Tests {
         //     print(new String(zeros));
         //     assert generations[x].equals(new String(zeros)) : ("Generation " + x + " didn't have " + (1+(x*2)) + " zeros");
         // }
-        
+
         //Test intToKAry
-        assert Integer.toString(a.intToKAry(777)).equals("0200221") : "int to KAry code conversion malfunction";
-        print("777 converted to 0200221");
+        String[] ternary = {"1","0","0","1","2","1","0"};
+        String s = Arrays.toString(ternary);
+        String s1 = Arrays.toString(a.intToKAry(777));
+        assert s1.equals(s) : "int to KAry code conversion malfunction";
+        print("777 converted to 1001210");
     }
 
     //printing shorthand

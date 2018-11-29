@@ -1,6 +1,7 @@
 // Implements a Totalistic Cellular Automaton
 
 import java.util.*;
+import java.lang.Math.*;
 import java.awt.Color;
 import java.lang.Integer;
 
@@ -8,7 +9,7 @@ public class Automaton {
     // FIELDS ==============================================================
     int k;
     int ruleCode;
-    String kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
+    String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
     HashMap<Integer,Color> valToColor;
     HashMap<Double,Integer> avgToVal;
 
@@ -25,43 +26,19 @@ public class Automaton {
         return k;
     };
 
-    public String getKAryCode() {
+    public String[] getKAryCode() {
         return kAryRuleCode;
     };
 
     //converts integer rule code to KAry rule code
-    public String intToKAry(int code) {
-        if(k==2) {
-        	return Integer.toBinaryString(code);
-        	}
-        else {
-        	String kCode = "";
-        	return intToKAryHelper(code,kCode,k);
+    public String[] intToKAry(int code) {
+    	String[] kCode = new String[(3*k-2)];
+        for(int n = 0; n < kCode.length; n++) {
+            String digit = Integer.toString((code/((int)Math.pow(k,n)))%k);
+            kCode[kCode.length - n - 1] = digit;
         }
-//        else if (k==3) {
-//        	String kCode = "";
-//        	int div = 3;
-//        	return inToKAryHelper(code,kCode,div);
-//        }
-//        else if(k==4) {
-//        	String kCode = "";
-//        	int div = 4;
-//        	return inToKAryHelper(code,kCode,div);
-//        }
-//        else {
-//        	return "";
-//        }
+    	return kCode;
      };
-
-     public static String intToKAryHelper(int code, String kCode, int div) {
-    	 if(code==0) {
-    		 return kCode;
-    	 } else {
-    		 String add = Integer.toString(code%div);
-    		 kCode = add+kCode;
-    		 return intToKAryHelper(code/div,kCode,div);
-    	 }
-     }
 
     //zeroColor & kColor determine how the rgb values change, will normally
     //just be RGB(255,255,255) & RGB(0,0,0). Also idk how colors work in Java
