@@ -8,7 +8,8 @@ import java.awt.event.*;
 import java.util.*;
 
 public class Automata extends Applet implements ActionListener {
-    protected Automaton automaton;
+    protected Automaton automaton; //our automaton
+    protected AutomatonCanvas ac; //its display
 
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 28));
@@ -39,6 +40,8 @@ public class Automata extends Applet implements ActionListener {
     //Where the sim gets drawn. Maybe run and clear buttons too
     protected Panel Simulation() {
         Panel sim = new Panel(new BorderLayout());
+        ac = new AutomatonCanvas(this);
+        sim.add(ac);
         return sim;
     }
 
@@ -52,5 +55,10 @@ public class Automata extends Applet implements ActionListener {
 
     // placeholder to get it to compile
     public void actionPerformed(ActionEvent e) {
+    }
+
+    // accessor for automaton variable
+    public Automaton automaton() {
+        return this.automaton;
     }
 }
