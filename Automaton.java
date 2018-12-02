@@ -14,10 +14,10 @@ public class Automaton {
     HashMap<Double,Integer> avgToVal;
 
     //CONSTRUCTOR ==========================================================
-    public Automaton(int kValue, int code) {
-        k = kValue;
+    public Automaton(int kVal, int code) {
+        k = kVal;
         ruleCode = code;
-        kAryRuleCode = intToKAry(ruleCode);
+        kAryRuleCode = intToKAry(ruleCode, k);
         //then set other three fields
     };
 
@@ -31,10 +31,10 @@ public class Automaton {
     };
 
     //converts integer rule code to KAry rule code
-    public String[] intToKAry(int code) {
-    	String[] kCode = new String[(3*k-2)];
+    public static String[] intToKAry(int code, int kVal) {
+    	String[] kCode = new String[(3*kVal-2)];
         for(int n = 0; n < kCode.length; n++) {
-            String digit = Integer.toString((code/((int)Math.pow(k,n)))%k);
+            String digit = Integer.toString((code/((int)Math.pow(kVal,n)))%kVal);
             kCode[kCode.length - n - 1] = digit;
         }
     	return kCode;
@@ -46,7 +46,10 @@ public class Automaton {
     protected void mapValToColor(Color zeroColor, Color kColor) {
     };
 
-    protected void mapAvgToVal(){} //this sets the rules
+    //Sets the rules
+    protected void mapAvgToVal(){
+
+    }
 
     // UTILS ===================================================================
 

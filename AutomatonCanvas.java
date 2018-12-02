@@ -15,31 +15,36 @@ public class AutomatonCanvas extends Canvas {
 
     // paint the Canvas
     public void paint ( Graphics g ) {
-        drawGeneration(g,new Cell(2),0,0,getWidth()/2);
+        //draw as many gens as we can fit on the screen
+        int cellSize =  parent.zoom();
+        int numOfGens = getWidth()/cellSize/2;
+        drawGeneration(g,new Cell(2),0,0,getWidth()/2,cellSize,0,numOfGens);
     }
 
     // Draw a generation gen w/ top at height y, centered at x. n represents the
-    // generation number, starting at 0
-    public void drawGeneration( Graphics g, Cell gen, int n, int y, int x ) {
+    // generation number, starting at 0. Stop drawing gens when genNum is greater
+    // than or equal to numOfGens. Draw each cell w/ edge of size pixels
+    public void drawGeneration( Graphics g, Cell gen, int n, int y, int x, int size, int genNum, int numOfGens ) {
         g.setColor(Color.black);
-        g.fillRect(x-3,y,6,6);
+        g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null) {
-            drawLeft(g,gen.next(),n,y,x-6);
-            drawRight(g,gen.next(),n,y,x+6);
+            drawLeft(g,gen.next(),n,y,x-size,size);
+            drawRight(g,gen.next(),n,y,x+size,size);
         }
-        drawGeneration( g, a.generate(gen), n+1, y+6, x );
+        if( genNum < numOfGens - 1 )
+            drawGeneration( g, a.generate(gen), n+1, y+size, x, size, genNum+1, numOfGens );
     }
 
-    public void drawLeft( Graphics g, Cell gen, int n, int y, int x ) {
-        g.fillRect(x-3,y,6,6);
+    public void drawLeft( Graphics g, Cell gen, int n, int y, int x, int size ) {
+        g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
-            drawLeft(g,gen.next(),n,y,x-6);
+            drawLeft(g,gen.next(),n,y,x-size,size);
     }
 
-    public void drawRight( Graphics g, Cell gen, int n, int y, int x ) {
-        g.fillRect(x-3,y,6,6);
+    public void drawRight( Graphics g, Cell gen, int n, int y, int x, int size ) {
+        g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
-            drawRight(g,gen.next(),n,y,x+6);
+            drawRight(g,gen.next(),n,y,x+size,size);
     }
 
 }
