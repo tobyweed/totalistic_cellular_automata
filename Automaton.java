@@ -53,17 +53,6 @@ public class Automaton {
 
     // UTILS ===================================================================
 
-    // THIS METHOD MAY NOT BE NECESSARY
-    // Return an array of n generations, starting from generation g
-    public static Cell[] generations(Cell g, int n){ //later add parameter HashMap rule
-        Cell[] generations = new Cell[n];
-        generations[0] = g;
-        for(int x = 1; x < n; x++) {
-            generations[x] = generate(generations[x-1]);
-        }
-        return generations;
-    }
-
     //Create a linked list representing one half of a generation of cells from
     //genesis cell of past generation
     public static Cell generate(Cell g) { //later add parameter HashMap rule
