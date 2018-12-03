@@ -171,7 +171,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
 
         NumberFormatter codeLimits = new NumberFormatter();
         NumberFormat nf = NumberFormat.getIntegerInstance();
-        nf.setGroupingUsed(false);
+        nf.setGroupingUsed(false); //avoid commas in formatting
         codeLimits.setFormat(nf);
         codeLimits.setMinimum(0);
         codeLimits.setMaximum(numPoss);
