@@ -21,38 +21,32 @@ public class AutomatonCanvas extends Canvas {
     public void paint ( Graphics g ) {
         //draw as many gens as we can fit on the screen
         int cellSize =  parent.zoom();
-        int numOfGens = getWidth()/cellSize/2;
-        drawGeneration(g,new Cell(1),0,0,getWidth()/2,cellSize,0,numOfGens);
-    }
-
-    // Draw a generation gen w/ top at height y, centered at x. n represents the
-    // generation number, starting at 0. Stop drawing gens when genNum is greater
-    // than or equal to numOfGens. Draw each cell w/ edge of size pixels
-    public void drawGeneration( Graphics g, Cell gen, int n, int y, int x, int size, int genNum, int numOfGens) {
-    	//int kInt = a.k;
-    	//String[] kCode = a.kAryRuleCode;
-        g.setColor(a.mapValToColor(Color.black, Color.white, gen.state(), a.k));
-        g.fillRect(x-(size/2),y,size,size);
-        if(gen.next() != null) {
-            drawLeft(g,gen.next(),n,y,x-size,size);
-            drawRight(g,gen.next(),n,y,x+size,size);
+        int width = getWidth()/cellSize;
+        int numGens = getHeight()/cellSize;
+        int[] gen1 = new int[width];
+        gen1[width/2] = 1;
+        int[][] gens = new int[numGens][width];
+        gens[0] = gen1;
+        for( int n = 1; n < gens.length; n++ ){
+            gens[n] = a.generate(gens[n-1],a.getK(),a.getKAryCode());
         }
-        if( genNum < numOfGens - 1 )
-            drawGeneration( g, a.generate(gen,a.k,a.kAryRuleCode), n+1, y+size, x, size, genNum+1, numOfGens);
+        drawGens(g,gens,cellSize);
     }
 
-    public void drawLeft( Graphics g, Cell gen, int n, int y, int x, int size ) {
-    	g.setColor(a.mapValToColor(Color.black, Color.white, gen.state(), a.k));
-    	g.fillRect(x-(size/2),y,size,size);
-        if(gen.next() != null)
-            drawLeft(g,gen.next(),n,y,x-size,size);
+    // Draw a generation gen w/ top at height y, centered at x.Stop drawing gens when genNum is greater
+    // than or equal to numOfGens. Draw each cell w/ edge of size pixels
+    public void drawGens( Graphics g, int[][] gens, int size) {
+        int k = a.k;
+        int x = 0;
+        int y = 0;
+        for( int[] gen : gens ){
+            for( int cell : gen ){
+                g.setColor(a.mapValToColor(Color.black, Color.white, cell, k));
+                g.fillRect(x,y,size,size);
+                x += size;
+            }
+            y += size;
+            x = 0;
+        }
     }
-
-    public void drawRight( Graphics g, Cell gen, int n, int y, int x, int size ) {
-    	g.setColor(a.mapValToColor(Color.black, Color.white, gen.state(), a.k));
-      g.fillRect(x-(size/2),y,size,size);
-        if(gen.next() != null)
-            drawRight(g,gen.next(),n,y,x+size,size);
-    }
-
 }
