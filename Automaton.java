@@ -54,7 +54,7 @@ public class Automaton {
     //Takes in zeroColor and kColor, which are the bounds of the colors,
     //and returns the color
     public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
-        float valFactor = ((float)val/(float)(kInt));
+        float valFactor = ((float)(val)/(float)(kInt));
         float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
         float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
         float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());
