@@ -46,7 +46,7 @@ public class AutomatonCanvas extends Canvas {
 
     public void drawRight( Graphics g, Cell gen, int n, int y, int x, int size ) {
     	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
-        g.fillRect(x-(size/2),y,size,size);
+      g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
             drawRight(g,gen.next(),n,y,x+size,size);
     }

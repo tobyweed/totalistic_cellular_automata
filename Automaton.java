@@ -28,10 +28,10 @@ public class Automaton {
         return k;
     };
 
-
     public String[] getKAryCode() {
         return kAryRuleCode;
     };
+
     //converts integer rule code to KAry rule code
     public static String[] intToKAry(int code, int kVal) {
     	String[] kCode = new String[(3*kVal-2)];
@@ -55,6 +55,7 @@ public class Automaton {
     	Color tile = new Color((rangeRed*valFactor)/255,(rangeGreen*valFactor)/255,(rangeBlue*valFactor)/255);
     	return tile;
     	}
+  
     //this sets the rules
     //sets color value for child based on avg value of parents
     //passes in the avg
@@ -86,12 +87,11 @@ public class Automaton {
     //Generate the next cell based on its three parents. If we're at the end of
     //the list, then base the next cell's state on that of the parent cell in
     //the direction of the center (lastState)
-    public static Cell generateNext(Cell p, int kInt, String[] kCode) { //later add parameter HashMap rule
+    public static Cell generateNext(Cell p, int kInt, String[] kCode) {
         Cell ret;
         Cell next;
         double avg = avgParentStates(p);
-        //int center = rule.get(avg)
-        int center = mapAvgToVal(avg,kInt,kCode); //just round for now
+        int center = mapAvgToVal(avg,kInt,kCode);
 
         if(p.next() != null) {
             next = generateNext(p.next(), kInt, kCode);
@@ -145,6 +145,7 @@ public class Automaton {
             s += g2SRight(c.next());
         return s;
     }
+
     //public static void main(String[]args) {
     	//System.out.println(mapValToColor(Color.black,Color.white,0,3));
     //}
