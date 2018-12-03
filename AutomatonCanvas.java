@@ -24,25 +24,29 @@ public class AutomatonCanvas extends Canvas {
     // Draw a generation gen w/ top at height y, centered at x. n represents the
     // generation number, starting at 0. Stop drawing gens when genNum is greater
     // than or equal to numOfGens. Draw each cell w/ edge of size pixels
-    public void drawGeneration( Graphics g, Cell gen, int n, int y, int x, int size, int genNum, int numOfGens ) {
-        g.setColor(Color.black);
+    public void drawGeneration( Graphics g, Cell gen, int n, int y, int x, int size, int genNum, int numOfGens) {
+    	//int kInt = a.k;
+    	//String[] kCode = a.kAryRuleCode;
+        g.setColor(a.mapValToColor(Color.black, Color.white, gen.state(), a.k));
         g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null) {
             drawLeft(g,gen.next(),n,y,x-size,size);
             drawRight(g,gen.next(),n,y,x+size,size);
         }
         if( genNum < numOfGens - 1 )
-            drawGeneration( g, a.generate(gen), n+1, y+size, x, size, genNum+1, numOfGens );
+            drawGeneration( g, a.generate(gen, a.k,a.kAryRuleCode), n+1, y+size, x, size, genNum+1, numOfGens);
     }
 
     public void drawLeft( Graphics g, Cell gen, int n, int y, int x, int size ) {
-        g.fillRect(x-(size/2),y,size,size);
+    	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
+    	g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
             drawLeft(g,gen.next(),n,y,x-size,size);
     }
 
     public void drawRight( Graphics g, Cell gen, int n, int y, int x, int size ) {
-        g.fillRect(x-(size/2),y,size,size);
+    	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
+      g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
             drawRight(g,gen.next(),n,y,x+size,size);
     }

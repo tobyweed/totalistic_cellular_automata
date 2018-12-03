@@ -5,12 +5,14 @@
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JSlider;
 import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.util.*;
 import java.text.*;
 
+    private Automaton automaton = new Automaton(3,777); //our automaton
 public class Automata extends Applet implements ActionListener, ChangeListener, ItemListener {
     private Automaton automaton; //our automaton
     private AutomatonCanvas ac; //its display
@@ -26,7 +28,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 14));
 
-        automaton = new Automaton(3,777);
+        //automaton = new Automaton(3,777);
         setLayout(new BorderLayout());
         add(Automata());
     }
@@ -65,6 +67,20 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         Label codeLabel = new Label("Decimal Rule Code:");
         int kVal = Integer.parseInt(kChoice.getSelectedItem());
         int numPoss = (int)Math.pow(kVal,(3*kVal-2));
+        JSlider codeSlider = new JSlider(JSlider.HORIZONTAL,0,numPoss,0);
+        Label decCodeDisplay = new Label("");
+
+        Panel codePanel = new Panel();
+        codePanel.setLayout(new BorderLayout());
+        codePanel.add("West", codeLabel);
+        codePanel.add("Center", codeSlider);
+
+        Panel specs = new Panel(new GridLayout(1,3,0,5));
+        specs.setBackground(new Color(244, 67, 65));
+        specs.add(kChoicePanel);
+        specs.add(codePanel);
+        specs.add(new Panel());
+
         decCodeSlider = new JSlider(JSlider.HORIZONTAL,0,numPoss,0);
         decCodeSlider.addChangeListener(this);
         NumberFormatter codeLimits = new NumberFormatter();
@@ -83,6 +99,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         specs.setBackground(new Color(244, 67, 65));
         specs.add(kChoicePanel);
         specs.add(codePanel);
+
         return specs;
     }
 
