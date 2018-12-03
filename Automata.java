@@ -125,9 +125,13 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
             ac.repaint();
         } else if (evt.getSource() == zoomIn && zoom <= 50) {
             zoom++;
+            automaton = new Automaton(kVal,decCode);
+            ac.setAutomaton(automaton);
             ac.repaint();
         } else if (evt.getSource() == zoomOut && zoom >= 2) {
             zoom--;
+            automaton = new Automaton(kVal,decCode);
+            ac.setAutomaton(automaton);
             ac.repaint();
         } else if (evt.getSource() == decCodeField) {
             int code = Integer.parseInt(decCodeField.getText());
