@@ -42,22 +42,30 @@ public class Automaton {
     	return kCode;
      };
 
-    //zeroColor & kColor determine how the rgb values change, will normally
-    //just be RGB(255,255,255) & RGB(0,0,0). Also idk how colors work in Java
-    //so it prob wonâ€™t actually be of type Color
     //Takes in zeroColor and kColor, which are the bounds of the colors,
-    //and returns the color
-     public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
+    //and value, which is the rule code value corresponding to the tile
+    //and k, and returns the color for each tile
+    public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
     	float valFactor = ((float)val/(float)(kInt));
-    	float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
-    	float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
-    	float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());
-    	Color tile = new Color((rangeRed*valFactor)/255,(rangeGreen*valFactor)/255,(rangeBlue*valFactor)/255);
+    	Color tile;
+    	if(val == 0){
+    		tile = zeroColor;
+    		}
+    	else if(val == kInt-1){
+    		tile = kColor;
+    		}
+    	else{
+    		float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
+    		float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
+    		float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());
+    		tile = new Color((rangeRed*valFactor)/255,(rangeGreen*valFactor)/255,(rangeBlue*valFactor)/255);
+    		}
     	return tile;
     	}
     //this sets the rules
     //sets color value for child based on avg value of parents
-    //passes in the avg
+    //Takes in parents' average, k, and the rule code,
+    //gives out the rule value corresponding to the average
     public static int mapAvgToVal(double avg,int kInt, String[] kCode){
     	double dif = kInt-avg;
     	double index = 3*(dif-1);
