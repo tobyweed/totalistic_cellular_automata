@@ -9,18 +9,19 @@ import java.awt.*;
 
 public class Automaton {
     // FIELDS ==============================================================
-    int k;
-    int ruleCode;
-    String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
-    HashMap<Integer,Color> valToColor;
-    HashMap<Double,Integer> avgToVal;
+    private int k;
+    private int ruleCode;
+    private String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
+    private HashMap<Integer,Color> valToColor;
+    private HashMap<Double,Integer> avgToVal;
+    private Vector<Integer> randomConfig;
 
     //CONSTRUCTOR ==========================================================
     public Automaton(int kVal, int code) {
         k = kVal;
         ruleCode = code;
         kAryRuleCode = intToKAry(ruleCode,this.k);
-        //then set other three fields
+        randomConfig = new Vector<Integer>();
     };
 
     // METHODS =============================================================
@@ -41,6 +42,23 @@ public class Automaton {
         return kAryRuleCode;
     };
 
+    // return the value of randomConfig[n]
+    public int getRndmAtN(int n) {
+        if(n < randomConfig.size())
+            return randomConfig.elementAt(n);
+        else
+            return setRndmAtN(n);
+    }
+
+    private int setRndmAtN(int n) {
+        int rand = (int)(k * Math.random());
+        if(n < randomConfig.size())
+            randomConfig.add( n, rand );
+        else
+            randomConfig.add( rand );
+        return rand;
+    }
+
     //converts integer rule code to KAry rule code
     public static String[] intToKAry(int code, int kVal) {
         String[] kCode = new String[(3*kVal-2)];
@@ -54,7 +72,7 @@ public class Automaton {
     //Takes in zeroColor and kColor, which are the bounds of the colors,
     //and returns the color
     public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
-        float valFactor = ((float)(val)/(float)(kInt));
+        float valFactor = ((float)(val+1)/(float)(kInt));
         float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
         float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
         float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());

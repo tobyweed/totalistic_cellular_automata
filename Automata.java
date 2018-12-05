@@ -20,9 +20,10 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     private TextField codeField;
     private JFormattedTextField decCodeField;
     private JSlider decCodeSlider;
-    private Button runButton, zoomIn, zoomOut;
+    private Button runButton, zoomIn, zoomOut, randomInit, singleInit;
 
     private int zoom = 5; //How many pixels is one edge of one cell
+    private boolean random = false; //Should the first generation be randomized?
 
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 14));
@@ -94,6 +95,9 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         Panel controls = new Panel(new GridLayout(1,2,0,5));
         controls.setBackground(new Color(145, 153, 186));
 
+        randomInit = new Button("Toggle Random Initialization");
+        randomInit.addActionListener(this);
+
         runButton = new Button("Run");
         runButton.addActionListener(this);
 
@@ -110,6 +114,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
 
+        controls.add(randomInit);
         controls.add(runButton);
         controls.add(zoomPanel);
         return controls;
@@ -132,6 +137,9 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         } else if (evt.getSource() == decCodeField) {
             int code = Integer.parseInt(decCodeField.getText());
             decCodeSlider.setValue(code);
+            ac.repaint();
+        } else if (evt.getSource() == randomInit ) {
+            random = !random;
             ac.repaint();
         }
     }
@@ -173,5 +181,10 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     // accessor for zoom variable
     public int zoom() {
         return this.zoom;
+    }
+
+    // accessor for init variable
+    public boolean randomInit() {
+        return this.random;
     }
 }
