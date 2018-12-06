@@ -13,12 +13,16 @@ public class AutomatonCanvas extends Canvas {
         a = parent.automaton();
     }
 
+    public void setAutomaton(Automaton atmtn) {
+        a = atmtn;
+    }
+
     // paint the Canvas
     public void paint ( Graphics g ) {
         //draw as many gens as we can fit on the screen
         int cellSize =  parent.zoom();
         int numOfGens = getWidth()/cellSize/2;
-        drawGeneration(g,new Cell(2),0,0,getWidth()/2,cellSize,0,numOfGens);
+        drawGeneration(g,new Cell(1),0,0,getWidth()/2,cellSize,0,numOfGens);
     }
 
     // Draw a generation gen w/ top at height y, centered at x. n represents the
@@ -27,26 +31,26 @@ public class AutomatonCanvas extends Canvas {
     public void drawGeneration( Graphics g, Cell gen, int n, int y, int x, int size, int genNum, int numOfGens) {
     	//int kInt = a.k;
     	//String[] kCode = a.kAryRuleCode;
-        g.setColor(a.mapValToColor(Color.black, Color.white, gen.state(), a.k));
+        g.setColor(a.mapValToColor(a.zeroColor, a.kColor, gen.state(), a.k));
         g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null) {
             drawLeft(g,gen.next(),n,y,x-size,size);
             drawRight(g,gen.next(),n,y,x+size,size);
         }
         if( genNum < numOfGens - 1 )
-            drawGeneration( g, a.generate(gen, a.k,a.kAryRuleCode), n+1, y+size, x, size, genNum+1, numOfGens);
+            drawGeneration( g, a.generate(gen,a.k,a.kAryRuleCode), n+1, y+size, x, size, genNum+1, numOfGens);
     }
 
     public void drawLeft( Graphics g, Cell gen, int n, int y, int x, int size ) {
-    	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
+    	g.setColor(a.mapValToColor(a.zeroColor, a.kColor, gen.state(), a.k));
     	g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
             drawLeft(g,gen.next(),n,y,x-size,size);
     }
 
     public void drawRight( Graphics g, Cell gen, int n, int y, int x, int size ) {
-    	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
-        g.fillRect(x-(size/2),y,size,size);
+    	g.setColor(a.mapValToColor(a.zeroColor, a.kColor, gen.state(), a.k));
+      g.fillRect(x-(size/2),y,size,size);
         if(gen.next() != null)
             drawRight(g,gen.next(),n,y,x+size,size);
     }

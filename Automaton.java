@@ -14,37 +14,55 @@ public class Automaton {
     String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
     HashMap<Integer,Color> valToColor;
     HashMap<Double,Integer> avgToVal;
+    Color zeroColor, kColor;
 
     //CONSTRUCTOR ==========================================================
-    public Automaton(int kVal, int code) {
+    public Automaton(int kVal, int code, Color zColor, Color k_Color) {
         k = kVal;
         ruleCode = code;
         kAryRuleCode = intToKAry(ruleCode,this.k);
+        zeroColor = zColor;
+        kColor = k_Color;
         //then set other three fields
     };
 
     // METHODS =============================================================
+    public void setK( int kVal ) {
+        k = kVal;
+    }
+
+    public void setCode( int code ) {
+        ruleCode = code;
+        kAryRuleCode = intToKAry(ruleCode,this.k);
+    }
+    public void setZeroColor(Color zColor){
+    	zeroColor = zColor;
+    }
+
     public int getK() {
         return k;
     };
 
-
     public String[] getKAryCode() {
         return kAryRuleCode;
     };
+
+    public Color getZeroColor(){
+    	return zeroColor;
+    }
+
     //converts integer rule code to KAry rule code
     public static String[] intToKAry(int code, int kVal) {
-    	String[] kCode = new String[(3*kVal-2)];
+        String[] kCode = new String[(3*kVal-2)];
         for(int n = 0; n < kCode.length; n++) {
             String digit = Integer.toString((code/((int)Math.pow(kVal,n)))%kVal);
             kCode[kCode.length - n - 1] = digit;
         }
-    	return kCode;
-     };
+        return kCode;
+    };
 
     //Takes in zeroColor and kColor, which are the bounds of the colors,
-    //and value, which is the rule code value corresponding to the tile
-    //and k, and returns the color for each tile
+    //and returns the color
     public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
     	float valFactor = ((float)val/(float)(kInt));
     	Color tile;
@@ -62,31 +80,30 @@ public class Automaton {
     		}
     	return tile;
     	}
+
     //this sets the rules
     //sets color value for child based on avg value of parents
-    //Takes in parents' average, k, and the rule code,
-    //gives out the rule value corresponding to the average
+    //passes in the avg
     public static int mapAvgToVal(double avg,int kInt, String[] kCode){
-    	double dif = kInt-avg;
-    	double index = 3*(dif-1);
-    	int ind = (int)Math.round(index);
-    	return Integer.parseInt(kCode[ind]);
+        double dif = kInt-avg;
+        double index = 3*(dif-1);
+        int ind = (int)Math.round(index);
+        return Integer.parseInt(kCode[ind]);
     }
 
     // UTILS ===================================================================
 
     //Create a linked list representing one half of a generation of cells from
     //genesis cell of past generation
-    public static Cell generate(Cell g, int kInt, String[] kCode) { //later add parameter HashMap rule
+    public static Cell generate(Cell g, int kInt, String[] kCode) {
         //determine the value of the c
         double total = g.state();
         total += (g.next() != null) ? (2*g.next().state()) : 0; //multiply by 2 for symmetry
         double avg = total / 3.0;
-        //int center = rule.get(avg)
-        int state = mapAvgToVal(avg,kInt,kCode); //just round for now
+        int state = mapAvgToVal(avg,kInt,kCode);
 
         //resursively get left & right by generateNext n other one
-        Cell nextCell = generateNext(g , kInt, kCode);
+        Cell nextCell = generateNext(g,kInt,kCode);
 
         return new Cell(state,nextCell);
     }
@@ -94,12 +111,11 @@ public class Automaton {
     //Generate the next cell based on its three parents. If we're at the end of
     //the list, then base the next cell's state on that of the parent cell in
     //the direction of the center (lastState)
-    public static Cell generateNext(Cell p, int kInt, String[] kCode) { //later add parameter HashMap rule
+    public static Cell generateNext(Cell p, int kInt, String[] kCode) {
         Cell ret;
         Cell next;
         double avg = avgParentStates(p);
-        //int center = rule.get(avg)
-        int center = mapAvgToVal(avg,kInt,kCode); //just round for now
+        int center = mapAvgToVal(avg,kInt,kCode);
 
         if(p.next() != null) {
             next = generateNext(p.next(), kInt, kCode);
@@ -141,7 +157,7 @@ public class Automaton {
     public static String g2SLeft(Cell c){
         String s = "";
         if(c.next() != null)
-            s += g2SLeft(c.next());
+        s += g2SLeft(c.next());
         s += c.state();
         return s;
     }
@@ -150,10 +166,7 @@ public class Automaton {
         String s = "";
         s += c.state();
         if(c.next() != null)
-            s += g2SRight(c.next());
+        s += g2SRight(c.next());
         return s;
     }
-    //public static void main(String[]args) {
-    	//System.out.println(mapValToColor(Color.black,Color.white,0,3));
-    //}
 }
