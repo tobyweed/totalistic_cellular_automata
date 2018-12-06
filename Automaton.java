@@ -35,6 +35,7 @@ public class Automaton {
         ruleCode = code;
         kAryRuleCode = intToKAry(ruleCode,this.k);
     }
+
     public void setZeroColor(Color zColor){
     	zeroColor = zColor;
     }
@@ -169,4 +170,8 @@ public class Automaton {
         s += g2SRight(c.next());
         return s;
     }
+
+    //public static void main(String[]args) {
+    //System.out.println(mapValToColor(Color.black,Color.white,0,3));
+    //}
 }

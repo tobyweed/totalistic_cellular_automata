@@ -13,6 +13,7 @@ import java.util.*;
 import java.text.*;
 import java.awt.Color;
 
+
 public class Automata extends Applet implements ActionListener, ChangeListener, ItemListener {
     private Automaton automaton; //our automaton
     private AutomatonCanvas ac; //its display
@@ -22,15 +23,17 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     private JFormattedTextField decCodeField;
     private JSlider decCodeSlider;
     private Button runButton, zoomIn, zoomOut;
-    private JFormattedTextField rZeroColorField, gZeroColorField, bZeroColorField;
-    private JFormattedTextField rKColorField, gKColorField, bKColorField;
+    private JSlider rZeroColorField, gZeroColorField, bZeroColorField;
+    private JSlider rKColorField, gKColorField, bKColorField;
 
     private int zoom = 5; //How many pixels is one edge of one cell
 
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 14));
 
+
         automaton = new Automaton(3,777, Color.white, Color.black);
+
         setLayout(new BorderLayout());
         BorderLayout b = new BorderLayout();
         Panel automata = new Panel(b); //Frame
@@ -58,6 +61,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         kChoice.addItem("10");
         kChoice.addItemListener(this);
         kChoice.setForeground(Color.black);
+        kChoice.select(automaton.k);
 
         Panel kChoicePanel = new Panel();
         kChoicePanel.setLayout(new BorderLayout());
@@ -85,7 +89,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         codePanel.add(decCodeField);
 
         Panel specs = new Panel(new FlowLayout());
-        specs.setBackground(new Color(244, 67, 65));
+        specs.setBackground(new Color(145, 153, 186));
         specs.add(kChoicePanel);
         specs.add(codePanel);
 
@@ -95,7 +99,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     //Where we run the applet
     protected Panel Controls() {
         Panel controls = new Panel(new GridLayout(1,3,0,5));
-        controls.setBackground(new Color(244, 67, 65));
+        controls.setBackground(new Color(145, 153, 186));
 
         runButton = new Button("Run");
         runButton.addActionListener(this);
@@ -113,37 +117,52 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
 
-        Panel colorControl = new Panel();
-        rZeroColorField = new JFormattedTextField("000");
-        rZeroColorField.addActionListener(this);
-        gZeroColorField = new JFormattedTextField("000");
-        gZeroColorField.addActionListener(this);
-        bZeroColorField = new JFormattedTextField("000");
-        bZeroColorField.addActionListener(this);
-        rKColorField = new JFormattedTextField("000");
-        rKColorField.addActionListener(this);
-        gKColorField = new JFormattedTextField("000");
-        gKColorField.addActionListener(this);
-        bKColorField = new JFormattedTextField("000");
-        bKColorField.addActionListener(this);
+        Panel colorControl1 = new Panel(new GridLayout(4,2));
+        Panel colorControl2 = new Panel(new GridLayout(4,2));
+        Panel sliders1 = new Panel(new GridLayout(3,1));
+        Panel labels1 = new Panel(new GridLayout(3,1));
 
-        Label zeroColorLabel = new Label("Lower Bound Color Code (RGB):");
-        Label kColorLabel = new Label("Upper Bound Color Code (RGB):");
 
-        Panel colorPanel = new Panel();
-        colorPanel.add(zeroColorLabel);
-        colorPanel.add(rZeroColorField);
-        colorPanel.add(gZeroColorField);
-        colorPanel.add(bZeroColorField);
-        colorPanel.add(kColorLabel);
-        colorPanel.add(rKColorField);
-        colorPanel.add(gKColorField);
-        colorPanel.add(bKColorField);
+        rZeroColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
+        rZeroColorField.addChangeListener(this);
+        gZeroColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
+        gZeroColorField.addChangeListener(this);
+        bZeroColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
+        bZeroColorField.addChangeListener(this);
+        rKColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
+        rKColorField.addChangeListener(this);
+        gKColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
+        gKColorField.addChangeListener(this);
+        bKColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
+        bKColorField.addChangeListener(this);
 
-        colorControl.add(colorPanel);
+
+        colorControl1.add(new Label(""));
+        colorControl1.add(new Label("Lower Color Bound"));
+        colorControl1.add(new Label("R:",Label.RIGHT));
+        colorControl1.add(rZeroColorField);
+        colorControl1.add(new Label("G:",Label.RIGHT));
+        colorControl1.add(gZeroColorField);
+        colorControl1.add(new Label("B:",Label.RIGHT));
+        colorControl1.add(bZeroColorField);
+
+        colorControl2.add(new Label(""));
+        colorControl2.add(new Label("Upper Color Bound"));
+        colorControl2.add(new Label("R:", Label.RIGHT));
+        colorControl2.add(rKColorField);
+        colorControl2.add(new Label("G:",Label.RIGHT));
+        colorControl2.add(gKColorField);
+        colorControl2.add(new Label("B:",Label.RIGHT));
+        colorControl2.add(bKColorField);
+
+
+        Panel colorPanel = new Panel(new GridLayout(1,2));
+        colorPanel.add(colorControl1);
+        colorPanel.add(colorControl2);
+
         controls.add(runButton);
         controls.add(zoomPanel);
-        controls.add(colorControl);
+        controls.add(colorPanel);
         return controls;
     }
 
@@ -152,12 +171,12 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         if (evt.getSource() == runButton) {
             int kVal = Integer.parseInt(kChoice.getSelectedItem());
             int decCode = Integer.parseInt(decCodeField.getText());
-            int rZeroValue = Integer.parseInt(rZeroColorField.getText());
-            int gZeroValue = Integer.parseInt(gZeroColorField.getText());
-            int bZeroValue = Integer.parseInt(bZeroColorField.getText());
-            int rKValue = Integer.parseInt(rKColorField.getText());
-            int gKValue = Integer.parseInt(gKColorField.getText());
-            int bKValue = Integer.parseInt(bKColorField.getText());
+            int rZeroValue = (rZeroColorField.getValue());
+            int gZeroValue = (gZeroColorField.getValue());
+            int bZeroValue = (bZeroColorField.getValue());
+            int rKValue = (rKColorField.getValue());
+            int gKValue = (gKColorField.getValue());
+            int bKValue = (bKColorField.getValue());
             Color zeroColor = new Color(((float)rZeroValue/255),((float)gZeroValue/255),((float)bZeroValue/255));
             Color kColor = new Color(((float)rKValue/255),((float)gKValue/255),((float)bKValue/255));
             automaton = new Automaton(kVal,decCode,zeroColor,kColor);
@@ -179,8 +198,33 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
 
     // Action handler for slider
     public void stateChanged(ChangeEvent evt) {
-        JSlider src = (JSlider)evt.getSource();
-        decCodeField.setText(Integer.toString(src.getValue()));
+    	if(evt.getSource()==decCodeSlider) {
+        	JSlider src = (JSlider)evt.getSource();
+        	decCodeField.setText(Integer.toString(src.getValue()));
+        	int kVal = Integer.parseInt(kChoice.getSelectedItem());
+        	int decCode = Integer.parseInt(decCodeField.getText());
+        	automaton = new Automaton(kVal,decCode, automaton.zeroColor, automaton.kColor);
+        	ac.setAutomaton(automaton);
+        	ac.repaint();
+    	}
+    	else if(evt.getSource()==rZeroColorField ||
+    			evt.getSource()==gZeroColorField ||
+    			evt.getSource()==bZeroColorField ||
+    			evt.getSource()==rKColorField ||
+    			evt.getSource()==gKColorField ||
+    			evt.getSource()==bKColorField) {
+    		int rZeroVal = rZeroColorField.getValue();
+    		int gZeroVal = gZeroColorField.getValue();
+    		int bZeroVal = bZeroColorField.getValue();
+    		int rKVal = rKColorField.getValue();
+    		int gKVal = gKColorField.getValue();
+    		int bKVal = bKColorField.getValue();
+    		Color zeroColor = new Color(((float)rZeroVal/255),((float)gZeroVal/255),((float)bZeroVal/255));
+    		Color kColor = new Color(((float)rKVal/255),((float)gKVal/255),((float)bKVal/255));
+    		automaton = new Automaton(automaton.k,automaton.ruleCode, zeroColor, kColor);
+    		ac.setAutomaton(automaton);
+        	ac.repaint();
+    	}
     }
 
     // action handler for choice menu
