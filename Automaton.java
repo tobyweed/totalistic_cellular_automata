@@ -83,6 +83,7 @@ public class Automaton {
         cellColor = new Color(rv,gv,bv);
         return cellColor;
 	}
+	
 
     // Given an average of parent value, a k value, and a kary rule code, return
     // the correct state for the child
@@ -92,4 +93,17 @@ public class Automaton {
         int ind = (int)Math.round(index);
         return Integer.parseInt(kCode[ind]);
     }
+	public static double[] avgFromK(int k) {
+    	DecimalFormat kFormat = new DecimalFormat("#.00");
+    	double[] avgs = new double[((3*k)-2)];
+    	for(int x=0;x < ((3*(double)k)-2);x++) {
+    		avgs[x] = Double.parseDouble(kFormat.format(((double)x/3)));
+    		System.out.println((double)x/3);
+    		//avgs = avgs + kFormat.format(((double)x/3));
+    	}
+    	return avgs;
+    }
+	
+	
+	
 }
