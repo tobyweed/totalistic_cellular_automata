@@ -31,6 +31,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     private JSlider rZeroColorField, gZeroColorField, bZeroColorField;
     private JSlider rKColorField, gKColorField, bKColorField;
     private Button runButton, zoomIn, zoomOut, randomInit, singleInit;
+    private Panel specs;
 
     // Automaton state
     // Note on initialization: it's alright to just set the fields here (not in a
@@ -121,36 +122,32 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
 
     //A visualization of the rule code
     protected Panel codeVis() {
+
         Panel codeVis = new Panel();
         codeVis.setBackground(new Color(145, 153, 186));
         codeVis.add(new Label("K-ary Rule Code: "));
 
-        int numCodes = (int)Math.pow(k,(3*k-2));
-        // int[] avgs = someMethod() <--get danny's method
+        String[] ruleCode = automaton.getKAryCode();
 
-        // for( int avg : avgs ) {
-        //     Color
-        // }
-        Panel code = new Panel(new GridLayout(2,1,0,2));
-        Label average = new Label("" + 0);
-        average.setBackground(Color.white);
-        code.add(average);
-        Label value = new Label("" + 0);
-        value.setBackground(Color.white);
-        code.add(value);
+        Panel code = new Panel(new GridLayout(2,((3*automaton.getK())-2),0,2));
+
+        for(double x:automaton.avgFromK(automaton.k)) {
+        	System.out.println(x);
+        	Label avg = new Label(Double.toString(x));
+        	avg.setBackground(automaton.mapValToColor(automaton.zeroColor, automaton.kColor, x, automaton.k));
+        	code.add(avg);
+        }
+        for(String x:ruleCode) {
+        	Label avg = new Label(x);
+        	avg.setBackground(automaton.mapValToColor(automaton.zeroColor, automaton.kColor, Double.parseDouble(x), automaton.k));
+        	code.add(avg);
+        }
+        //code.add(value);
 
         codeVis.add(code);
         return codeVis;
     }
-
-    //Draw a knary code visualization
-    // protected void drawCode( Panel parent, int code, int x, int y ) {
-    //     if(code >= 0) {
-    //         Panel code = new Panel();
-    //         code.setLayout(new GridLayout)
-    //     }
-    // }
-
+  
     //Where we run the applet
     protected Panel Controls() {
         Panel controls = new Panel(new GridLayout(1,3,0,5));
@@ -174,7 +171,6 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomIn);
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
-
         controls.add(randomInit);
         controls.add(runButton);
         controls.add(zoomPanel);
@@ -225,7 +221,11 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         colorPanel.add(colorControl1);
         colorPanel.add(colorControl2);
 
-        return colorPanel;
+        controls.add(randomInit);
+        controls.add(runButton);
+        controls.add(zoomPanel);
+        controls.add(colorPanel);
+        return controls;
     }
 
     // EVENT HANDLERS ==========================================================
@@ -274,7 +274,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         	JSlider src = (JSlider)evt.getSource();
         	decCodeField.setText(Integer.toString(src.getValue()));
         	ruleCode = src.getValue();
-            kAryRuleCode = Automaton.intToKAry(ruleCode,k);
+          kAryRuleCode = Automaton.intToKAry(ruleCode,k);
         	ac.repaint();
     	} else if(evt.getSource()==rZeroColorField ||
     			evt.getSource()==gZeroColorField ||
@@ -290,7 +290,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     		int bKVal = bKColorField.getValue();
     		zeroColor = new Color(((float)rZeroVal/255),((float)gZeroVal/255),((float)bZeroVal/255));
     		kColor = new Color(((float)rKVal/255),((float)gKVal/255),((float)bKVal/255));
-        	ac.repaint();
+        ac.repaint();
     	}
     }
 
