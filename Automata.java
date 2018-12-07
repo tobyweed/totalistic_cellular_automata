@@ -74,7 +74,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         kChoice.addItem("1000");
         kChoice.addItemListener(this);
         kChoice.setForeground(Color.black);
-        kChoice.select(automaton.k);
+        kChoice.select(automaton.getK());
 
         Panel kChoicePanel = new Panel(new BorderLayout());
         kChoicePanel.add("West", kLabel);
@@ -161,7 +161,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomIn);
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
-      
+
         //potentially worth making this its own method
         Panel colorControl1 = new Panel(new GridLayout(4,2));
         Panel colorControl2 = new Panel(new GridLayout(4,2));
@@ -205,7 +205,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         Panel colorPanel = new Panel(new GridLayout(1,2));
         colorPanel.add(colorControl1);
         colorPanel.add(colorControl2);
-      
+
         controls.add(randomInit);
         controls.add(runButton);
         controls.add(zoomPanel);
@@ -227,7 +227,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
             Color zeroColor = new Color(((float)rZeroValue/255),((float)gZeroValue/255),((float)bZeroValue/255));
             Color kColor = new Color(((float)rKValue/255),((float)gKValue/255),((float)bKValue/255));
             automaton = new Automaton(kVal,decCode,zeroColor,kColor);
-          
+
             ac.setAutomaton(automaton);
             ac.repaint();
         } else if (evt.getSource() == zoomIn && zoom <= 50) {
@@ -254,7 +254,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         	decCodeField.setText(Integer.toString(src.getValue()));
         	int kVal = Integer.parseInt(kChoice.getSelectedItem());
         	int decCode = Integer.parseInt(decCodeField.getText());
-        	automaton = new Automaton(kVal,decCode, automaton.zeroColor, automaton.kColor);
+        	automaton = new Automaton(kVal,decCode, automaton.getZeroColor(), automaton.getKColor());
         	ac.setAutomaton(automaton);
         	ac.repaint();
     	}
@@ -272,38 +272,10 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     		int bKVal = bKColorField.getValue();
     		Color zeroColor = new Color(((float)rZeroVal/255),((float)gZeroVal/255),((float)bZeroVal/255));
     		Color kColor = new Color(((float)rKVal/255),((float)gKVal/255),((float)bKVal/255));
-    		automaton = new Automaton(automaton.k,automaton.ruleCode, zeroColor, kColor);
+    		automaton = new Automaton(automaton.getK(),automaton.getCode(), zeroColor, kColor);
     		ac.setAutomaton(automaton);
         	ac.repaint();
     	}
-    }
-
-    // action handler for choice menu
-    public void itemStateChanged(ItemEvent evt)  {
-        int kVal = Integer.parseInt(kChoice.getSelectedItem());
-        int numPoss = (int)Math.pow(kVal,(3*kVal-2));
-        decCodeSlider.setMaximum(numPoss);
-        decCodeSlider.setValue(0);
-
-        NumberFormatter codeLimits = new NumberFormatter();
-        NumberFormat nf = NumberFormat.getIntegerInstance();
-        nf.setGroupingUsed(false); //avoid commas in formatting
-        codeLimits.setFormat(nf);
-        codeLimits.setMinimum(0);
-        codeLimits.setMaximum(numPoss);
-        DefaultFormatterFactory limitsFactory = new DefaultFormatterFactory(codeLimits);
-        decCodeField.setFormatterFactory(limitsFactory);
-    }
-
-    // Action handler for slider
-    public void stateChanged(ChangeEvent evt) {
-        JSlider src = (JSlider)evt.getSource();
-        decCodeField.setText(Integer.toString(src.getValue()));
-        int kVal = Integer.parseInt(kChoice.getSelectedItem());
-        int decCode = Integer.parseInt(decCodeField.getText());
-        automaton = new Automaton(kVal,decCode);
-        ac.setAutomaton(automaton);
-        ac.repaint();
     }
 
     // action handler for choice menu

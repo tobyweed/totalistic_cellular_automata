@@ -13,7 +13,7 @@ public class Automaton {
     private int ruleCode;
     private String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
     private Vector<Integer> randomConfig;
-    Color zeroColor, kColor;
+    private Color zeroColor, kColor;
 
     //CONSTRUCTOR ==========================================================
     public Automaton(int kVal, int code, Color zColor, Color k_Color) {
@@ -42,6 +42,14 @@ public class Automaton {
     public int getK() {
         return k;
     };
+
+    public Color getKColor() {
+        return kColor;
+    };
+
+    public int getCode() {
+        return ruleCode;
+    }
 
     public String[] getKAryCode() {
         return kAryRuleCode;
