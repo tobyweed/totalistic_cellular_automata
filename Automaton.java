@@ -12,8 +12,6 @@ public class Automaton {
     private int k;
     private int ruleCode;
     private String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
-    private HashMap<Integer,Color> valToColor;
-    private HashMap<Double,Integer> avgToVal;
     private Vector<Integer> randomConfig;
 
     //CONSTRUCTOR ==========================================================

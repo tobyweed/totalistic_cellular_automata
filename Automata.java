@@ -32,17 +32,28 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         setLayout(new BorderLayout());
         BorderLayout b = new BorderLayout();
         Panel automata = new Panel(b); //Frame
+
+        // Panel topDisplay = new Panel();
+        // topDisplay.setLayout(new GridLayout(2,1));
+        // topDisplay.add(Specs());
+        // topDisplay.add(codeVis());
         automata.add("North",Specs());
+
         Panel sim = new Panel(new BorderLayout());
         ac = new AutomatonCanvas(this);
         sim.add(ac);
         automata.add("Center",sim);
+
         automata.add("South",Controls());
+
         add(automata);
     }
 
-    //Where num of colors, decimal rule code, & k-ary rule code live
+    //Where num of colors & decimal rule code live
     private Panel Specs() {
+        Panel specs = new Panel(new FlowLayout());
+        specs.setBackground(new Color(145, 153, 186));
+
         Label kLabel = new Label("Number of Colors:");
         kChoice = new Choice();
         kChoice.addItem("2");
@@ -54,11 +65,15 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         kChoice.addItem("8");
         kChoice.addItem("9");
         kChoice.addItem("10");
+        kChoice.addItem("11");
+        kChoice.addItem("12");
+        kChoice.addItem("13");
+        kChoice.addItem("100");
+        kChoice.addItem("1000");
         kChoice.addItemListener(this);
         kChoice.setForeground(Color.black);
 
-        Panel kChoicePanel = new Panel();
-        kChoicePanel.setLayout(new BorderLayout());
+        Panel kChoicePanel = new Panel(new BorderLayout());
         kChoicePanel.add("West", kLabel);
         kChoicePanel.add("Center", kChoice);
 
@@ -75,20 +90,50 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         codeLimits.setMaximum(numPoss);
         decCodeField = new JFormattedTextField(codeLimits);
         decCodeField.addActionListener(this);
+        decCodeField.setColumns(7);
 
         Panel codePanel = new Panel();
-        codePanel.setLayout(new GridLayout(1,3));
+        codePanel.setLayout(new FlowLayout());
         codePanel.add(codeLabel);
         codePanel.add(decCodeSlider);
         codePanel.add(decCodeField);
 
-        Panel specs = new Panel(new FlowLayout());
-        specs.setBackground(new Color(145, 153, 186));
         specs.add(kChoicePanel);
         specs.add(codePanel);
+        specs.add(codeVis());
 
         return specs;
     }
+
+    //A visualization of the rule code
+    protected Panel codeVis() {
+        Panel codeVis = new Panel();
+        codeVis.setBackground(new Color(145, 153, 186));
+        codeVis.add(new Label("K-ary Rule Code: "));
+
+        int kVal = automaton.getK();
+        int numCodes = (int)Math.pow(kVal,(3*kVal-2));
+        String[] ruleCode = automaton.getKAryCode();
+
+        Panel code = new Panel(new GridLayout(2,1,0,2));
+        Label average = new Label("" + 0);
+        average.setBackground(Color.white);
+        code.add(average);
+        Label value = new Label("" + 0);
+        value.setBackground(Color.white);
+        code.add(value);
+
+        codeVis.add(code);
+        return codeVis;
+    }
+
+    //Draw a knary code visualization
+    // protected void drawCode( Panel parent, int code, int x, int y ) {
+    //     if(code >= 0) {
+    //         Panel code = new Panel();
+    //         code.setLayout(new GridLayout)
+    //     }
+    // }
 
     //Where we run the applet
     protected Panel Controls() {
