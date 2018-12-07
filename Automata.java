@@ -70,8 +70,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         kChoice.addItem("11");
         kChoice.addItem("12");
         kChoice.addItem("13");
-        kChoice.addItem("100");
-        kChoice.addItem("1000");
+        kChoice.addItem("50");
         kChoice.addItemListener(this);
         kChoice.setForeground(Color.black);
         kChoice.select(automaton.getK());
@@ -117,7 +116,11 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         int kVal = automaton.getK();
         int numCodes = (int)Math.pow(kVal,(3*kVal-2));
         String[] ruleCode = automaton.getKAryCode();
+        // int[] avgs = someMethod() <--get danny's method
 
+        // for( int avg : avgs ) {
+        //     Color
+        // }
         Panel code = new Panel(new GridLayout(2,1,0,2));
         Label average = new Label("" + 0);
         average.setBackground(Color.white);
@@ -162,7 +165,14 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
 
-        //potentially worth making this its own method
+        controls.add(randomInit);
+        controls.add(runButton);
+        controls.add(zoomPanel);
+        controls.add(ColorPanel());
+        return controls;
+    }
+
+    public Panel ColorPanel() {
         Panel colorControl1 = new Panel(new GridLayout(4,2));
         Panel colorControl2 = new Panel(new GridLayout(4,2));
         Panel sliders1 = new Panel(new GridLayout(3,1));
@@ -206,11 +216,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         colorPanel.add(colorControl1);
         colorPanel.add(colorControl2);
 
-        controls.add(randomInit);
-        controls.add(runButton);
-        controls.add(zoomPanel);
-        controls.add(colorPanel);
-        return controls;
+        return colorPanel;
     }
 
     // action handler for buttons & TextField

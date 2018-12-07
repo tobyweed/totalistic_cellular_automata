@@ -52,7 +52,7 @@ public class AutomatonCanvas extends Canvas {
         int y = 0;
         for( int[] gen : gens ){
             for( int cell : gen ){
-                g.setColor(a.mapValToColor(a.getZeroColor(), a.getKColor(), cell, k));
+                g.setColor(a.mapValToColor(a.getZeroColor(), a.getKColor(), (double)cell, k));
                 g.fillRect(x,y,size,size);
                 x += size;
             }

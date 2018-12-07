@@ -88,23 +88,19 @@ public class Automaton {
 
     //Takes in zeroColor and kColor, which are the bounds of the colors,
     //and returns the color
-    public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
-    	float valFactor = ((float)val/(float)(kInt));
-    	Color tile;
-    	if(val == 0){
-    		tile = zeroColor;
-    		}
-    	else if(val == kInt-1){
-    		tile = kColor;
-    		}
-    	else{
-    		float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
-    		float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
-    		float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());
-    		tile = new Color((rangeRed*valFactor)/255,(rangeGreen*valFactor)/255,(rangeBlue*valFactor)/255);
-    		}
-    	return tile;
-    	}
+    public static Color mapValToColor(Color zeroColor, Color kColor, double val, int kInt) {
+        double vf = val/((double)kInt-1); //vF for "value factor"
+        //Color ranges
+        double rr = (double)kColor.getRed()-(double)zeroColor.getRed();
+        double rg = (double)kColor.getGreen()-(double)zeroColor.getGreen();
+        double rb = (double)kColor.getBlue()-(double)zeroColor.getBlue();
+        Color cellColor;
+        int rv = (int)(zeroColor.getRed()+(int)(rr*vf));
+        int gv = (int)(zeroColor.getGreen()+(int)(rg*vf));
+        int bv = (int)(zeroColor.getBlue()+(int)(rb*vf));
+        cellColor = new Color(rv,gv,bv);
+        return cellColor;
+	}
 
     //this sets the rules
     //sets color value for child based on avg value of parents
