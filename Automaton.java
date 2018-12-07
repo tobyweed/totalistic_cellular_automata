@@ -1,4 +1,18 @@
-// Implements a Totalistic Cellular Automaton
+/**
+    Class with methods to generate 1D, totalistic, nearest-neighbor cellular automata
+    Generates generations of automata as simple arrays of integers
+    A note on implementation: this class has been set up as a functional one,
+    keeping all the methods to generate automata static, and storing the
+    necessary fields (k, ruleCode, etc) in Automata. This allows flexibility,
+    prevents having to constantly switch automatons in/change automaton state from
+    Automata, and (mostly) prevents dual sources of truth on automaton state.
+    It also has downsides, like only being able to have one automaton at a time
+    & not really having a clearly defined "automaton" in general. It seemed like
+    making Automaton functional was the best route for now, but it could be easily
+    changed. Anyways, just thought that deserved explanation.
+    CS 201 Final Project - Totalistic Cellular Automata
+    Danny Grubbs-Donovan and Toby Weed
+**/
 
 import java.util.*;
 import java.lang.Math.*;
@@ -6,77 +20,44 @@ import java.awt.Color;
 import java.lang.Integer;
 import java.awt.*;
 
-
+@SuppressWarnings("serial") // to avoid Eclipse warning
 public class Automaton {
-    // FIELDS ==============================================================
-    private int k;
-    private int ruleCode;
-    private String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
-    private Vector<Integer> randomConfig;
-    private Color zeroColor, kColor;
+    // METHODS =================================================================
 
-    //CONSTRUCTOR ==========================================================
-    public Automaton(int kVal, int code, Color zColor, Color k_Color) {
-        k = kVal;
-        ruleCode = code;
-        kAryRuleCode = intToKAry(ruleCode,this.k);
-        zeroColor = zColor;
-        kColor = k_Color;
-        randomConfig = new Vector<Integer>();
-    };
+    //Create a linked list representing a generation of cells from
+    //genesis cell of past generation
+    //Note: this method treats the parent array as circular, so the edge cells
+    //include the cell on the parent's other edge when updating their state.
+    //The alternatives to this are to have the arrays be infinite or treat the edges
+    //as some value (ex.: "0"). Circularity seemed cleanest, but can create
+    //unexpected behavior on the edges when resizing.
+    public static int[] generate(int[] parent, int kInt, String[] kCode) {
+        int[] nextGen = new int[parent.length];
 
-    // METHODS =============================================================
-    public void setK( int kVal ) {
-        k = kVal;
-    }
+        //average parent state
+        for(int n = 0; n < parent.length; n++) {
+            double total = parent[n];
+            if(n > 0)
+                total += parent[n-1];
+            else
+                total += parent[parent.length-1]; //make circular
+            if(n < parent.length - 1)
+                total += parent[n+1];
+            else
+                total += parent[0]; //make circular
+            double avg = total / 3.0;
 
-    public void setCode( int code ) {
-        ruleCode = code;
-        kAryRuleCode = intToKAry(ruleCode,this.k);
-    }
+            //assign correct state
+            int state = mapAvgToVal(avg,kInt,kCode);
+            nextGen[n] = state;
+        }
 
-    public void setZeroColor(Color zColor){
-    	zeroColor = zColor;
-    }
-
-    public int getK() {
-        return k;
-    };
-
-    public Color getKColor() {
-        return kColor;
-    };
-
-    public int getCode() {
-        return ruleCode;
-    }
-
-    public String[] getKAryCode() {
-        return kAryRuleCode;
-    };
-
-    public Color getZeroColor(){
-    	return zeroColor;
-    }
-
-    // return the value of randomConfig[n]
-    public int getRndmAtN(int n) {
-        if(n < randomConfig.size())
-            return randomConfig.elementAt(n);
-        else
-            return setRndmAtN(n);
-    }
-
-    private int setRndmAtN(int n) {
-        int rand = (int)(k * Math.random());
-        if(n < randomConfig.size())
-            randomConfig.add( n, rand );
-        else
-            randomConfig.add( rand );
-        return rand;
+        return nextGen;
     }
 
     //converts integer rule code to KAry rule code
+    //So takes in a decimal rule code and converts that
+    //number to binary, ternary etc. based on kval.
     public static String[] intToKAry(int code, int kVal) {
         String[] kCode = new String[(3*kVal-2)];
         for(int n = 0; n < kCode.length; n++) {
@@ -86,10 +67,13 @@ public class Automaton {
         return kCode;
     };
 
-    //Takes in zeroColor and kColor, which are the bounds of the colors,
-    //and returns the color
+    //Takes zeroColor and kColor, which are the bounds of the colors,
+    //and returns the correct color for state val in a kInt-ary automaton.
+    //Returns zeroColor or kColor if the value is at either extreme
+    //of the bounds, and calculates an intermediate color if the value
+    //is in the middle.
     public static Color mapValToColor(Color zeroColor, Color kColor, double val, int kInt) {
-        double vf = val/((double)kInt-1); //vF for "value factor"
+        double vf = val/((double)kInt-1); //vf for "value factor"
         //Color ranges
         double rr = (double)kColor.getRed()-(double)zeroColor.getRed();
         double rg = (double)kColor.getGreen()-(double)zeroColor.getGreen();
@@ -102,50 +86,16 @@ public class Automaton {
         return cellColor;
 	}
 
-    //this sets the rules
-    //sets color value for child based on avg value of parents
-    //passes in the avg
-    public static int mapAvgToVal(double avg,int kInt, String[] kCode){
+    // Given an average of parent value, a k value, and a kary rule code, return
+    // the correct state for the child
+    // This val will then be used to set the color for the child
+    // using mapValToColor. This is how color is set generation to
+    // generation.
+    public static int mapAvgToVal(double avg, int kInt, String[] kCode){
         double dif = kInt-avg;
         double index = 3*(dif-1);
         int ind = (int)Math.round(index);
         return Integer.parseInt(kCode[ind]);
     }
 
-    // UTILS ===================================================================
-
-    //Create a linked list representing a generation of cells from
-    //genesis cell of past generation
-    public static int[] generate(int[] parent, int kInt, String[] kCode) {
-        int[] nextGen = new int[parent.length];
-        for(int n = 0; n < parent.length; n++) {
-            double total = parent[n];
-            if(n > 0)
-                total += parent[n-1];
-            else
-                total += parent[parent.length-1]; //make circular
-            if(n < parent.length - 1)
-                total += parent[n+1];
-            else
-                total += parent[0]; //make circular
-            double avg = total / 3.0;
-            int state = mapAvgToVal(avg,kInt,kCode);
-            nextGen[n] = state;
-        }
-        return nextGen;
-    }
-
-    //Avg a cell's parent states, given its parent closest to the center.
-    public static double avgParentStates(Cell c) {
-        double total = 0;
-        if(c != null) {
-            total += c.state();
-            if(c.next() != null) {
-                total += c.next().state();
-                if(c.next().next() != null)
-                total += c.next().next().state();
-            }
-        }
-        return total / 3.0;
-    }
 }
