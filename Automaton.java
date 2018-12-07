@@ -13,12 +13,15 @@ public class Automaton {
     private int ruleCode;
     private String[] kAryRuleCode; //Unnecessary but avoids having to constantly recalculate
     private Vector<Integer> randomConfig;
+    Color zeroColor, kColor;
 
     //CONSTRUCTOR ==========================================================
-    public Automaton(int kVal, int code) {
+    public Automaton(int kVal, int code, Color zColor, Color k_Color) {
         k = kVal;
         ruleCode = code;
         kAryRuleCode = intToKAry(ruleCode,this.k);
+        zeroColor = zColor;
+        kColor = k_Color;
         randomConfig = new Vector<Integer>();
     };
 
@@ -32,6 +35,10 @@ public class Automaton {
         kAryRuleCode = intToKAry(ruleCode,this.k);
     }
 
+    public void setZeroColor(Color zColor){
+    	zeroColor = zColor;
+    }
+
     public int getK() {
         return k;
     };
@@ -39,6 +46,10 @@ public class Automaton {
     public String[] getKAryCode() {
         return kAryRuleCode;
     };
+
+    public Color getZeroColor(){
+    	return zeroColor;
+    }
 
     // return the value of randomConfig[n]
     public int getRndmAtN(int n) {
@@ -70,13 +81,22 @@ public class Automaton {
     //Takes in zeroColor and kColor, which are the bounds of the colors,
     //and returns the color
     public static Color mapValToColor(Color zeroColor, Color kColor, int val, int kInt) {
-        float valFactor = ((float)(val+1)/(float)(kInt));
-        float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
-        float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
-        float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());
-        Color tile = new Color((rangeRed*valFactor)/255,(rangeGreen*valFactor)/255,(rangeBlue*valFactor)/255);
-        return tile;
-    }
+    	float valFactor = ((float)val/(float)(kInt));
+    	Color tile;
+    	if(val == 0){
+    		tile = zeroColor;
+    		}
+    	else if(val == kInt-1){
+    		tile = kColor;
+    		}
+    	else{
+    		float rangeGreen = Math.abs((float)kColor.getGreen()-(float)zeroColor.getGreen());
+    		float rangeBlue = Math.abs((float)kColor.getBlue()-(float)zeroColor.getBlue());
+    		float rangeRed = Math.abs((float)kColor.getRed()-(float)zeroColor.getRed());
+    		tile = new Color((rangeRed*valFactor)/255,(rangeGreen*valFactor)/255,(rangeBlue*valFactor)/255);
+    		}
+    	return tile;
+    	}
 
     //this sets the rules
     //sets color value for child based on avg value of parents
