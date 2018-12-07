@@ -70,10 +70,11 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         kChoice.addItem("11");
         kChoice.addItem("12");
         kChoice.addItem("13");
-        kChoice.addItem("50");
+        kChoice.addItem("100");
+        kChoice.addItem("1000");
         kChoice.addItemListener(this);
         kChoice.setForeground(Color.black);
-        kChoice.select(automaton.getK());
+        kChoice.select(automaton.k);
 
         Panel kChoicePanel = new Panel(new BorderLayout());
         kChoicePanel.add("West", kLabel);
@@ -109,6 +110,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
 
     //A visualization of the rule code
     protected Panel codeVis() {
+
         Panel codeVis = new Panel();
         codeVis.setBackground(new Color(145, 153, 186));
         codeVis.add(new Label("K-ary Rule Code: "));
@@ -116,18 +118,20 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         int kVal = automaton.getK();
         int numCodes = (int)Math.pow(kVal,(3*kVal-2));
         String[] ruleCode = automaton.getKAryCode();
-        // int[] avgs = someMethod() <--get danny's method
 
-        // for( int avg : avgs ) {
-        //     Color
-        // }
-        Panel code = new Panel(new GridLayout(2,1,0,2));
-        Label average = new Label("" + 0);
-        average.setBackground(Color.white);
-        code.add(average);
-        Label value = new Label("" + 0);
-        value.setBackground(Color.white);
-        code.add(value);
+        Panel code = new Panel(new GridLayout(2,((3*automaton.getK())-2),0,2));
+
+        for(double x:automaton.avgFromK(automaton.k)) {
+        	Label avg = new Label(Double.toString(x));
+        	avg.setBackground(automaton.mapValToColor(automaton.zeroColor, automaton.kColor, x, automaton.k));
+        	code.add(avg);
+        }
+        for(String x:ruleCode) {
+        	Label avg = new Label(x);
+        	avg.setBackground(automaton.mapValToColor(automaton.zeroColor, automaton.kColor, Double.parseDouble(x), automaton.k));
+        	code.add(avg);
+        }
+        //code.add(value);
 
         codeVis.add(code);
         return codeVis;
@@ -165,14 +169,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
 
-        controls.add(randomInit);
-        controls.add(runButton);
-        controls.add(zoomPanel);
-        controls.add(ColorPanel());
-        return controls;
-    }
-
-    public Panel ColorPanel() {
+        //potentially worth making this its own method
         Panel colorControl1 = new Panel(new GridLayout(4,2));
         Panel colorControl2 = new Panel(new GridLayout(4,2));
         Panel sliders1 = new Panel(new GridLayout(3,1));
@@ -216,7 +213,11 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         colorPanel.add(colorControl1);
         colorPanel.add(colorControl2);
 
-        return colorPanel;
+        controls.add(randomInit);
+        controls.add(runButton);
+        controls.add(zoomPanel);
+        controls.add(colorPanel);
+        return controls;
     }
 
     // action handler for buttons & TextField
@@ -260,7 +261,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         	decCodeField.setText(Integer.toString(src.getValue()));
         	int kVal = Integer.parseInt(kChoice.getSelectedItem());
         	int decCode = Integer.parseInt(decCodeField.getText());
-        	automaton = new Automaton(kVal,decCode, automaton.getZeroColor(), automaton.getKColor());
+        	automaton = new Automaton(kVal,decCode, automaton.zeroColor, automaton.kColor);
         	ac.setAutomaton(automaton);
         	ac.repaint();
     	}
@@ -278,7 +279,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     		int bKVal = bKColorField.getValue();
     		Color zeroColor = new Color(((float)rZeroVal/255),((float)gZeroVal/255),((float)bZeroVal/255));
     		Color kColor = new Color(((float)rKVal/255),((float)gKVal/255),((float)bKVal/255));
-    		automaton = new Automaton(automaton.getK(),automaton.getCode(), zeroColor, kColor);
+    		automaton = new Automaton(automaton.k,automaton.ruleCode, zeroColor, kColor);
     		ac.setAutomaton(automaton);
         	ac.repaint();
     	}
@@ -300,6 +301,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         DefaultFormatterFactory limitsFactory = new DefaultFormatterFactory(codeLimits);
         decCodeField.setFormatterFactory(limitsFactory);
     }
+
 
     // ACCESSORS================================================================
     // accessor for automaton variable
