@@ -13,6 +13,7 @@ import java.util.*;
 import java.text.*;
 import java.awt.Color;
 
+@SuppressWarnings("serial") // to avoid Eclipse warning
 public class Automata extends Applet implements ActionListener, ChangeListener, ItemListener {
     private Automaton automaton; //our automaton
     private AutomatonCanvas ac; //its display
@@ -191,7 +192,6 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         gKColorField.addChangeListener(this);
         bKColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
         bKColorField.addChangeListener(this);
-
 
         colorControl1.add(new Label(""));
         colorControl1.add(new Label("Lower Color Bound"));
