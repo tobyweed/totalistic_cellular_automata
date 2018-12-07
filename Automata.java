@@ -1,6 +1,11 @@
-// Totalistic Cellular Automata Applet
-//
-// Toby Weed & Danny Grubbs-Donovan
+/**
+    Canvas on which to paint the automaton
+
+    Implemented using an AWT canvas
+
+    CS 201 Final Project - Totalistic Cellular Automata
+    Danny Grubbs-Donovan and Toby Weed
+**/
 
 import java.applet.*;
 import java.awt.*;
@@ -15,9 +20,10 @@ import java.awt.Color;
 
 @SuppressWarnings("serial") // to avoid Eclipse warning
 public class Automata extends Applet implements ActionListener, ChangeListener, ItemListener {
-    private Automaton automaton; //our automaton
-    private AutomatonCanvas ac; //its display
+    // FIELDS ==================================================================
+    private AutomatonCanvas ac; // automaton display
 
+    // Variable components
     private Choice kChoice;
     private TextField codeField;
     private JFormattedTextField decCodeField;
@@ -26,21 +32,29 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     private JSlider rKColorField, gKColorField, bKColorField;
     private Button runButton, zoomIn, zoomOut, randomInit, singleInit;
 
+    // Automaton state
+    // Note on initialization: it's alright to just set the fields here (not in a
+    // constructor) because we only want to initialize the applet once (on load),
+    // never again
     private int zoom = 5; //How many pixels is one edge of one cell
     private boolean random = false; //Should the first generation be randomized?
+    private int k = 3; //the number of possible states for each cell
+    private int ruleCode = 777; //the decimal value of the rule code
+    private String[] kAryRuleCode; //the k-ary value of the rule code
+    private Vector<Integer> randomConfig = new Vector<Integer>(); //A vector of cell with random states
+    private Color zeroColor = Color.white; //color bounds
+    private Color kColor = Color.black;
 
+    // SETUP ===================================================================
+    // Initialize the applet
     public void init() {
         setFont(new Font("TimesRoman", Font.BOLD, 14));
 
-        automaton = new Automaton(3,777, Color.white, Color.black);
         setLayout(new BorderLayout());
         BorderLayout b = new BorderLayout();
         Panel automata = new Panel(b); //Frame
+        kAryRuleCode = Automaton.intToKAry(ruleCode,k);
 
-        // Panel topDisplay = new Panel();
-        // topDisplay.setLayout(new GridLayout(2,1));
-        // topDisplay.add(Specs());
-        // topDisplay.add(codeVis());
         automata.add("North",Specs());
 
         Panel sim = new Panel(new BorderLayout());
@@ -48,43 +62,39 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         sim.add(ac);
         automata.add("Center",sim);
         automata.add("South",Controls());
+        //Set initial state for displays
+        rZeroColorField.setValue(254);
+        gZeroColorField.setValue(254);
+        bZeroColorField.setValue(254);
+        decCodeField.setValue(777);
+        decCodeSlider.setValue(777);
 
         add(automata);
     }
 
-    //Where num of colors & decimal rule code live
+    // COMPONENTS ==============================================================
+    // UI to change k & decimal rule code. Also displays visualization of kary
+    // rule code
     private Panel Specs() {
         Panel specs = new Panel(new FlowLayout());
         specs.setBackground(new Color(145, 153, 186));
 
         Label kLabel = new Label("Number of Colors:");
         kChoice = new Choice();
-        kChoice.addItem("2");
-        kChoice.addItem("3");
-        kChoice.addItem("4");
-        kChoice.addItem("5");
-        kChoice.addItem("6");
-        kChoice.addItem("7");
-        kChoice.addItem("8");
-        kChoice.addItem("9");
-        kChoice.addItem("10");
-        kChoice.addItem("11");
-        kChoice.addItem("12");
-        kChoice.addItem("13");
-        kChoice.addItem("50");
+        for(int n = 2; n <= 100; n++) {
+            kChoice.addItem("" + n);
+        }
         kChoice.addItemListener(this);
         kChoice.setForeground(Color.black);
-        kChoice.select(automaton.getK());
+        kChoice.select(1);
 
         Panel kChoicePanel = new Panel(new BorderLayout());
         kChoicePanel.add("West", kLabel);
         kChoicePanel.add("Center", kChoice);
 
         Label codeLabel = new Label("Decimal Rule Code:");
-        int kVal = Integer.parseInt(kChoice.getSelectedItem());
-        int numPoss = (int)Math.pow(kVal,(3*kVal-2));
+        int numPoss = (int)Math.pow(k,(3*k-2));
         JSlider codeSlider = new JSlider(JSlider.HORIZONTAL,0,numPoss,0);
-        Label decCodeDisplay = new Label("");
 
         decCodeSlider = new JSlider(JSlider.HORIZONTAL,0,numPoss,0);
         decCodeSlider.addChangeListener(this);
@@ -94,6 +104,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         decCodeField = new JFormattedTextField(codeLimits);
         decCodeField.addActionListener(this);
         decCodeField.setColumns(7);
+        decCodeField.setValue(0);
 
         Panel codePanel = new Panel();
         codePanel.setLayout(new FlowLayout());
@@ -114,9 +125,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         codeVis.setBackground(new Color(145, 153, 186));
         codeVis.add(new Label("K-ary Rule Code: "));
 
-        int kVal = automaton.getK();
-        int numCodes = (int)Math.pow(kVal,(3*kVal-2));
-        String[] ruleCode = automaton.getKAryCode();
+        int numCodes = (int)Math.pow(k,(3*k-2));
         // int[] avgs = someMethod() <--get danny's method
 
         // for( int avg : avgs ) {
@@ -173,12 +182,12 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         return controls;
     }
 
+    // The panel to change color themese
     public Panel ColorPanel() {
         Panel colorControl1 = new Panel(new GridLayout(4,2));
         Panel colorControl2 = new Panel(new GridLayout(4,2));
         Panel sliders1 = new Panel(new GridLayout(3,1));
         Panel labels1 = new Panel(new GridLayout(3,1));
-
 
         rZeroColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
         rZeroColorField.addChangeListener(this);
@@ -219,78 +228,82 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         return colorPanel;
     }
 
+    // EVENT HANDLERS ==========================================================
     // action handler for buttons & TextField
     public void actionPerformed(ActionEvent evt) {
-        if (evt.getSource() == runButton) {
-            int kVal = Integer.parseInt(kChoice.getSelectedItem());
-            int decCode = Integer.parseInt(decCodeField.getText());
+        if (evt.getSource() == runButton) { // set automaton state and repaint
+            //sync up state
+            k = Integer.parseInt(kChoice.getSelectedItem());
+            ruleCode = Integer.parseInt(decCodeField.getText());
+            kAryRuleCode = Automaton.intToKAry(ruleCode,k);
             int rZeroValue = (rZeroColorField.getValue());
             int gZeroValue = (gZeroColorField.getValue());
             int bZeroValue = (bZeroColorField.getValue());
             int rKValue = (rKColorField.getValue());
             int gKValue = (gKColorField.getValue());
             int bKValue = (bKColorField.getValue());
-            Color zeroColor = new Color(((float)rZeroValue/255),((float)gZeroValue/255),((float)bZeroValue/255));
-            Color kColor = new Color(((float)rKValue/255),((float)gKValue/255),((float)bKValue/255));
-            automaton = new Automaton(kVal,decCode,zeroColor,kColor);
+            zeroColor = new Color(((float)rZeroValue/255),((float)gZeroValue/255),((float)bZeroValue/255));
+            kColor = new Color(((float)rKValue/255),((float)gKValue/255),((float)bKValue/255));
+            decCodeField.setText(Integer.toString(ruleCode));
 
-            ac.setAutomaton(automaton);
+            //re-randomize randomConfig
+            randomConfig = new Vector<Integer>();
+
+            //repaint the automaton
             ac.repaint();
-        } else if (evt.getSource() == zoomIn && zoom <= 50) {
+        } else if (evt.getSource() == zoomIn && zoom <= 50) { //zoom in. Cap at 51 pixels
             zoom++;
             ac.repaint();
-        } else if (evt.getSource() == zoomOut && zoom >= 2) {
+        } else if (evt.getSource() == zoomOut && zoom >= 2) { //zoom out. Cap at 1 pixel
             zoom--;
             ac.repaint();
-        } else if (evt.getSource() == decCodeField) {
-            int code = Integer.parseInt(decCodeField.getText());
-            decCodeSlider.setValue(code);
+        } else if (evt.getSource() == decCodeField) { //Change the rulecodes & update displays
+            ruleCode = Integer.parseInt(decCodeField.getText());
+            kAryRuleCode = Automaton.intToKAry(ruleCode,k);
+            decCodeSlider.setValue(ruleCode);
             ac.repaint();
-        } else if (evt.getSource() == randomInit ) {
+        } else if (evt.getSource() == randomInit ) { //Toggle random initialization
             random = !random;
             ac.repaint();
         }
-
     }
 
-    // Action handler for slider
+    // Action handler for sliders
     public void stateChanged(ChangeEvent evt) {
-    	if(evt.getSource()==decCodeSlider) {
+    	if(evt.getSource()==decCodeSlider) { //Change the rulecodes & update displays
         	JSlider src = (JSlider)evt.getSource();
         	decCodeField.setText(Integer.toString(src.getValue()));
-        	int kVal = Integer.parseInt(kChoice.getSelectedItem());
-        	int decCode = Integer.parseInt(decCodeField.getText());
-        	automaton = new Automaton(kVal,decCode, automaton.getZeroColor(), automaton.getKColor());
-        	ac.setAutomaton(automaton);
+        	ruleCode = src.getValue();
+            kAryRuleCode = Automaton.intToKAry(ruleCode,k);
         	ac.repaint();
-    	}
-    	else if(evt.getSource()==rZeroColorField ||
+    	} else if(evt.getSource()==rZeroColorField ||
     			evt.getSource()==gZeroColorField ||
     			evt.getSource()==bZeroColorField ||
     			evt.getSource()==rKColorField ||
     			evt.getSource()==gKColorField ||
-    			evt.getSource()==bKColorField) {
+    			evt.getSource()==bKColorField) { //Change the colors
     		int rZeroVal = rZeroColorField.getValue();
     		int gZeroVal = gZeroColorField.getValue();
     		int bZeroVal = bZeroColorField.getValue();
     		int rKVal = rKColorField.getValue();
     		int gKVal = gKColorField.getValue();
     		int bKVal = bKColorField.getValue();
-    		Color zeroColor = new Color(((float)rZeroVal/255),((float)gZeroVal/255),((float)bZeroVal/255));
-    		Color kColor = new Color(((float)rKVal/255),((float)gKVal/255),((float)bKVal/255));
-    		automaton = new Automaton(automaton.getK(),automaton.getCode(), zeroColor, kColor);
-    		ac.setAutomaton(automaton);
+    		zeroColor = new Color(((float)rZeroVal/255),((float)gZeroVal/255),((float)bZeroVal/255));
+    		kColor = new Color(((float)rKVal/255),((float)gKVal/255),((float)bKVal/255));
         	ac.repaint();
     	}
     }
 
     // action handler for choice menu
     public void itemStateChanged(ItemEvent evt)  {
-        int kVal = Integer.parseInt(kChoice.getSelectedItem());
-        int numPoss = (int)Math.pow(kVal,(3*kVal-2));
+        k = Integer.parseInt(kChoice.getSelectedItem());
+
+        // update decCodeSlider maximum value and set current value to zero
+        int numPoss = (int)Math.pow(k,(3*k-2));
         decCodeSlider.setMaximum(numPoss);
         decCodeSlider.setValue(0);
 
+        //update decCodeField limits & format
         NumberFormatter codeLimits = new NumberFormatter();
         NumberFormat nf = NumberFormat.getIntegerInstance();
         nf.setGroupingUsed(false); //avoid commas in formatting
@@ -299,21 +312,60 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         codeLimits.setMaximum(numPoss);
         DefaultFormatterFactory limitsFactory = new DefaultFormatterFactory(codeLimits);
         decCodeField.setFormatterFactory(limitsFactory);
+
+        //update state & run
+        ruleCode = 0;
+        kAryRuleCode = Automaton.intToKAry(ruleCode,k);
+        ac.repaint();
     }
 
-    // ACCESSORS================================================================
-    // accessor for automaton variable
-    public Automaton automaton() {
-        return this.automaton;
-    }
-
-    // accessor for zoom variable
+    // UTILS====================================================================
+    // Getters -----------------------------------------------------------------
     public int zoom() {
-        return this.zoom;
+        return zoom;
     }
 
-    // accessor for init variable
     public boolean randomInit() {
-        return this.random;
+        return random;
+    }
+
+    public int getK() {
+        return k;
+    };
+
+    public Color getKColor() {
+        return kColor;
+    };
+
+    public int getCode() {
+        return ruleCode;
+    }
+
+    public String[] getKAryCode() {
+        return kAryRuleCode;
+    };
+
+    public Color getZeroColor() {
+        return zeroColor;
+    }
+
+    // Return the value of randomConfig[n]. Vector which will expand as necessary
+    // but remain constant if we zoom in
+    public int getRndmAtN(int n) {
+        if(n < randomConfig.size())
+            return randomConfig.elementAt(n);
+        else // if there's no value at n then make one
+            return setRndmAtN(n);
+    }
+
+    // Setters -----------------------------------------------------------------
+    // Put a random value from 0 to k at index n
+    private int setRndmAtN(int n) {
+        int rand = (int)(k * Math.random());
+        if(n < randomConfig.size())
+            randomConfig.add( n, rand );
+        else
+            randomConfig.add( rand );
+        return rand;
     }
 }

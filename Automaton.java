@@ -1,9 +1,17 @@
 /**
-    Class to generate 1D, totalistic, nearest-neighbor cellular automata
-
-    Stores necessary values & methods to generate automata but not automata themselves
+    Class with methods to generate 1D, totalistic, nearest-neighbor cellular automata
 
     Generates generations of automata as simple arrays of integers
+
+    A note on implementation: this class has been set up as a functional one,
+    keeping all the methods to generate automata static, and storing the
+    necessary fields (k, ruleCode, etc) in Automata. This allows flexibility,
+    prevents having to constantly switch automatons in/change automaton state from
+    Automata, and (mostly) prevents dual sources of truth on automaton state.
+    It also has downsides, like only being able to have one automaton at a time
+    & not really having a clearly defined "automaton" in general. It seemed like
+    making Automaton functional was the best route for now, but it could be easily
+    changed. Anyways, just thought that deserved explanation.
 
     CS 201 Final Project - Totalistic Cellular Automata
     Danny Grubbs-Donovan and Toby Weed
@@ -17,30 +25,19 @@ import java.awt.*;
 
 @SuppressWarnings("serial") // to avoid Eclipse warning
 public class Automaton {
-    // FIELDS ==============================================================
-    private int k; //the number of possible states for each cell
-    private int ruleCode; //the decimal value of the rule code
-    private String[] kAryRuleCode; //the k-ary value of the rule code
-    private Vector<Integer> randomConfig; //A vector of cell with random states
-    private Color zeroColor, kColor; //the color bounds
-
-    //CONSTRUCTOR ==========================================================
-    public Automaton(int kVal, int code, Color zColor, Color k_Color) {
-        k = kVal;
-        ruleCode = code;
-        kAryRuleCode = intToKAry(ruleCode,this.k);
-        zeroColor = zColor;
-        kColor = k_Color;
-        randomConfig = new Vector<Integer>();
-    };
-
     // METHODS =================================================================
-    // Generation & Initialization =============================================
 
     //Create a linked list representing a generation of cells from
     //genesis cell of past generation
+    //Note: this method treats the parent array as circular, so the edge cells
+    //include the cell on the parent's other edge when updating their state.
+    //The alternatives to this are to have the arrays be infinite or treat the edges
+    //as some value (ex.: "0"). Circularity seemed cleanest, but can create
+    //unexpected behavior on the edges when resizing.
     public static int[] generate(int[] parent, int kInt, String[] kCode) {
         int[] nextGen = new int[parent.length];
+
+        //average parent state
         for(int n = 0; n < parent.length; n++) {
             double total = parent[n];
             if(n > 0)
@@ -52,67 +49,15 @@ public class Automaton {
             else
                 total += parent[0]; //make circular
             double avg = total / 3.0;
+
+            //assign correct state
             int state = mapAvgToVal(avg,kInt,kCode);
             nextGen[n] = state;
         }
+
         return nextGen;
     }
 
-    // Return the value of randomConfig[n]. Vector which will expand as necessary
-    // but remain constant if we zoom in
-    public int getRndmAtN(int n) {
-        if(n < randomConfig.size())
-            return randomConfig.elementAt(n);
-        else // if there's no value at n then make one
-            return setRndmAtN(n);
-    }
-
-    // Put a random value from 0 to k at index n
-    private int setRndmAtN(int n) {
-        int rand = (int)(k * Math.random());
-        if(n < randomConfig.size())
-            randomConfig.add( n, rand );
-        else
-            randomConfig.add( rand );
-        return rand;
-    }
-
-    // Getters -----------------------------------------------------------------
-    public int getK() {
-        return k;
-    };
-
-    public Color getKColor() {
-        return kColor;
-    };
-
-    public int getCode() {
-        return ruleCode;
-    }
-
-    public String[] getKAryCode() {
-        return kAryRuleCode;
-    };
-
-    public Color getZeroColor(){
-        return zeroColor;
-    }
-
-    // Setters -----------------------------------------------------------------
-    public void setK( int kVal ) {
-        k = kVal;
-    }
-
-    public void setCode( int code ) {
-        ruleCode = code;
-        kAryRuleCode = intToKAry(ruleCode,this.k);
-    }
-
-    public void setZeroColor(Color zColor){
-    	zeroColor = zColor;
-    }
-
-    // Utils -------------------------------------------------------------------
     //converts integer rule code to KAry rule code
     public static String[] intToKAry(int code, int kVal) {
         String[] kCode = new String[(3*kVal-2)];

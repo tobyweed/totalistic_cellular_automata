@@ -12,24 +12,17 @@ import java.lang.Math.*;
 
 @SuppressWarnings("serial") // to avoid Eclipse warning
 public class AutomatonCanvas extends Canvas {
-    protected Automata parent; // access to main applet class
-    protected Automaton a; // quick access to the parent's current automaton
+    protected Automata a; // access to main applet class
 
     // constructor
     public AutomatonCanvas(Automata app) {
-        parent = app;
-        a = parent.automaton();
-    }
-
-    // automaton setter for when parent automaton changes
-    public void setAutomaton(Automaton atmtn) {
-        a = atmtn;
+        a = app;
     }
 
     // paint the canvas
     public void paint ( Graphics g ) {
         // draw as many gens as we can fit on the screen
-        int cellSize =  parent.zoom();
+        int cellSize =  a.zoom();
         int width = getWidth()/cellSize;
         int numGens = getHeight()/cellSize;
 
@@ -38,7 +31,7 @@ public class AutomatonCanvas extends Canvas {
         int[] gen1 = new int[width];
 
         // if we are in random init then init with one cell of state 1 in the center
-        if(!parent.randomInit()){
+        if(!a.randomInit()){
             gen1[width/2] = 1;
         } // otherwise set the first generation as a random array
         else {
@@ -52,7 +45,7 @@ public class AutomatonCanvas extends Canvas {
 
         // produce all of our generations
         for( int n = 1; n < gens.length; n++ ){
-            gens[n] = a.generate(gens[n-1],a.getK(),a.getKAryCode());
+            gens[n] = Automaton.generate(gens[n-1],a.getK(),a.getKAryCode());
         }
         drawGens(g,gens,cellSize);
     }
@@ -66,7 +59,7 @@ public class AutomatonCanvas extends Canvas {
         int y = 0;
         for( int[] gen : gens ){
             for( int cell : gen ){
-                g.setColor(a.mapValToColor(a.getZeroColor(), a.getKColor(), (double)cell, k));
+                g.setColor(Automaton.mapValToColor(a.getZeroColor(), a.getKColor(), (double)cell, k));
                 g.fillRect(x,y,size,size);
                 x += size;
             }
