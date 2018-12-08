@@ -1,54 +1,74 @@
-//Canvas where we will paint our automaton
+/**
+    Canvas on which to paint the automaton
+    
+    This will get repainted whenever the colors or ruleCode are changed
+    from automata. This iteratively draws the generations of cells using the rule
+    code and sets the color of the cells using the automaton method
+    mapValToColor.
+
+    CS 201 Final Project - Totalistic Cellular Automata
+
+    Danny Grubbs-Donovan and Toby Weed
+**/
 
 import java.awt.*;
+import java.lang.Math.*;
 
 @SuppressWarnings("serial") // to avoid Eclipse warning
 public class AutomatonCanvas extends Canvas {
-    protected Automata parent;  // access to main applet class
-    protected Automaton a;
+    protected Automata a; // access to main applet class
 
     // constructor
     public AutomatonCanvas(Automata app) {
-        parent = app;
-        a = parent.automaton();
+        a = app;
     }
 
-    // paint the Canvas
+    // paint the canvas
     public void paint ( Graphics g ) {
-        //draw as many gens as we can fit on the screen
-        int cellSize =  parent.zoom();
-        int numOfGens = getWidth()/cellSize/2;
-        drawGeneration(g,new Cell(2),0,0,getWidth()/2,cellSize,0,numOfGens);
-    }
+        // draw as many gens as we can fit on the screen
+        int cellSize =  a.zoom();
+        int width = getWidth()/cellSize;
+        int numGens = getHeight()/cellSize;
 
-    // Draw a generation gen w/ top at height y, centered at x. n represents the
-    // generation number, starting at 0. Stop drawing gens when genNum is greater
-    // than or equal to numOfGens. Draw each cell w/ edge of size pixels
-    public void drawGeneration( Graphics g, Cell gen, int n, int y, int x, int size, int genNum, int numOfGens) {
-    	//int kInt = a.k;
-    	//String[] kCode = a.kAryRuleCode;
-        g.setColor(a.mapValToColor(Color.black, Color.white, gen.state(), a.k));
-        g.fillRect(x-(size/2),y,size,size);
-        if(gen.next() != null) {
-            drawLeft(g,gen.next(),n,y,x-size,size);
-            drawRight(g,gen.next(),n,y,x+size,size);
+        // store numGens of our automaton in a 2D array
+        int[][] gens = new int[numGens][width];
+        int[] gen1 = new int[width];
+
+        // if we are in random init then init with one cell of state 1 in the center
+        if(!a.randomInit()){
+            gen1[width/2] = 1;
+        } // otherwise set the first generation as a random array
+        else {
+            //the number fewer cells displayed relative to the min zoom (1)
+            int lostInFront = (getWidth() - width)/2;
+            for( int n = 0; n < gen1.length; n++ ){
+                gen1[n] = a.getRndmAtN(n+lostInFront);
+            }
         }
-        if( genNum < numOfGens - 1 )
-            drawGeneration( g, a.generate(gen, a.k,a.kAryRuleCode), n+1, y+size, x, size, genNum+1, numOfGens);
+        gens[0] = gen1;
+
+        // produce all of our generations
+        for( int n = 1; n < gens.length; n++ ){
+            gens[n] = Automaton.generate(gens[n-1],a.getK(),a.getKAryCode());
+        }
+        drawGens(g,gens,cellSize);
     }
 
-    public void drawLeft( Graphics g, Cell gen, int n, int y, int x, int size ) {
-    	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
-    	g.fillRect(x-(size/2),y,size,size);
-        if(gen.next() != null)
-            drawLeft(g,gen.next(),n,y,x-size,size);
+    // loop through 2D array gens and print them starting in the top left corner
+    // of the canvas. Each generations proceed left to right, top to bottom.
+    // Each cell will be printed as a square of dimension sixe x size.
+    public void drawGens( Graphics g, int[][] gens, int size) {
+        int k = a.getK();
+        int x = 0;
+        int y = 0;
+        for( int[] gen : gens ){
+            for( int cell : gen ){
+                g.setColor(Automaton.mapValToColor(a.getZeroColor(), a.getKColor(), (double)cell, k));
+                g.fillRect(x,y,size,size);
+                x += size;
+            }
+            y += size;
+            x = 0;
+        }
     }
-
-    public void drawRight( Graphics g, Cell gen, int n, int y, int x, int size ) {
-    	g.setColor(a.mapValToColor(Color.white, Color.black, gen.state(), a.k));
-      g.fillRect(x-(size/2),y,size,size);
-        if(gen.next() != null)
-            drawRight(g,gen.next(),n,y,x+size,size);
-    }
-
 }
