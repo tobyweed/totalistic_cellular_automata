@@ -1,10 +1,13 @@
 /**
     Canvas on which to paint the automaton
+    
     This will get repainted whenever the colors or ruleCode are changed
     from automata. This iteratively draws the generations of cells using the rule
     code and sets the color of the cells using the automaton method
     mapValToColor.
+
     CS 201 Final Project - Totalistic Cellular Automata
+
     Danny Grubbs-Donovan and Toby Weed
 **/
 

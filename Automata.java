@@ -1,22 +1,30 @@
 /**
     Class from which the main applet is run.
-    This class initializes the applet and the automatonCanvas and automaton
-    classes.
-    Implemented using an AWT canvas
+
+    This class initializes the applet and the automatonCanvas, and stores all
+    state necessary to run the applet.
+
     CS 201 Final Project - Totalistic Cellular Automata
     Danny Grubbs-Donovan and Toby Weed
+
+    Totalistic cellular automata are implemented here roughly as described by
+    Wolfram at http://mathworld.wolfram.com/TotalisticCellularAutomaton.html
+    (accessed Dec 7, 2018).
 **/
 
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.text.*;
+import java.awt.Color;
+// We know you said maybe don't use too many external packages, but the app is
+// just sooo much better with sliders and we couldn't find a way to implement them
+// without Swing
 import javax.swing.JSlider;
 import javax.swing.event.*;
 import javax.swing.*;
 import javax.swing.text.*;
-import java.util.*;
-import java.text.*;
-import java.awt.Color;
 
 @SuppressWarnings("serial") // to avoid Eclipse warning
 public class Automata extends Applet implements ActionListener, ChangeListener, ItemListener {
@@ -30,13 +38,11 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     private JSlider rZeroColorField, gZeroColorField, bZeroColorField;
     private JSlider rKColorField, gKColorField, bKColorField;
     private Button runButton, zoomIn, zoomOut, randomInit, singleInit;
-    private Panel specs;
 
     // Automaton state
     // Note on initialization: it's alright to just set the fields here (not in a
     // constructor) because we only want to initialize the applet once (on load),
     // never again
-
     private int zoom = 5; //How many pixels is one edge of one cell
     private boolean random = false; //Should the first generation be randomized?
     private int k = 4; //the number of possible states for each cell
@@ -80,9 +86,10 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         Panel specs = new Panel(new FlowLayout());
         specs.setBackground(new Color(145, 153, 186));
 
+        // menu to choose k
         Label kLabel = new Label("Number of Colors:");
-        kChoice = new Choice(); //menu to choose colors
-        for(int n = 2; n <= 100; n++) {
+        kChoice = new Choice();
+        for(int n = 2; n <= 20; n++) {
             kChoice.addItem("" + n);
         }
         kChoice.addItemListener(this);
@@ -93,6 +100,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         kChoicePanel.add("West", kLabel);
         kChoicePanel.add("Center", kChoice);
 
+        // Decimal rule code slider and text field
         Label codeLabel = new Label("Decimal Rule Code:");
         int numPoss = (int)Math.pow(k,(3*k-2));
 
@@ -124,13 +132,16 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         Panel controls = new Panel(new GridLayout(1,3,0,5));
         controls.setBackground(new Color(145, 153, 186));
 
-        randomInit = new Button("Toggle Random Initialization"); //Button for a rondom starting state.
+        // Button for a random starting state.
+        randomInit = new Button("Toggle Random Initialization");
         randomInit.addActionListener(this);
 
-        runButton = new Button("Run"); //run button
+        // run button
+        runButton = new Button("Run");
         runButton.addActionListener(this);
 
-        Label zoomLabel = new Label("Zoom:"); //zoom button
+        // zoom panel
+        Label zoomLabel = new Label("Zoom:");
         zoomIn = new Button("+");
         zoomIn.addActionListener(this);
         Label zoomSlash = new Label("/");
@@ -142,6 +153,8 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         zoomPanel.add(zoomIn);
         zoomPanel.add(zoomSlash);
         zoomPanel.add(zoomOut);
+
+        // Add + return everything
         controls.add(randomInit);
         controls.add(runButton);
         controls.add(zoomPanel);
@@ -157,7 +170,6 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
         Panel colorControl2 = new Panel(new GridLayout(4,2));
         Panel sliders1 = new Panel(new GridLayout(3,1));
         Panel labels1 = new Panel(new GridLayout(3,1));
-
 
         //Color sliders
         rZeroColorField = new JSlider(JSlider.HORIZONTAL, 0,255,0);
@@ -218,9 +230,6 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
             zeroColor = new Color(((float)rZeroValue/255),((float)gZeroValue/255),((float)bZeroValue/255));
             kColor = new Color(((float)rKValue/255),((float)gKValue/255),((float)bKValue/255));
             decCodeField.setText(Integer.toString(ruleCode));
-
-            //set the new automaton
-            //ac.setAutomaton(new Automaton(k,ruleCode,zeroColor,kColor));
 
             //re-randomize randomConfig
             randomConfig = new Vector<Integer>();

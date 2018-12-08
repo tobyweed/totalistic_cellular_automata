@@ -1,6 +1,8 @@
 /**
     Class with methods to generate 1D, totalistic, nearest-neighbor cellular automata
+
     Generates generations of automata as simple arrays of integers
+
     A note on implementation: this class has been set up as a functional one,
     keeping all the methods to generate automata static, and storing the
     necessary fields (k, ruleCode, etc) in Automata. This allows flexibility,
@@ -9,7 +11,8 @@
     It also has downsides, like only being able to have one automaton at a time
     & not really having a clearly defined "automaton" in general. It seemed like
     making Automaton functional was the best route for now, but it could be easily
-    changed. Anyways, just thought that deserved explanation.
+    changed. Anyways, we just thought that deserved explanation.
+
     CS 201 Final Project - Totalistic Cellular Automata
     Danny Grubbs-Donovan and Toby Weed
 **/
