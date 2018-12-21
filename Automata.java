@@ -4,12 +4,14 @@
     This class initializes the applet and the automatonCanvas, and stores all
     state necessary to run the applet.
 
-    CS 201 Final Project - Totalistic Cellular Automata
-    Danny Grubbs-Donovan and Toby Weed
-
     Totalistic cellular automata are implemented here roughly as described by
     Wolfram at http://mathworld.wolfram.com/TotalisticCellularAutomaton.html
     (accessed Dec 7, 2018).
+
+    Git repo: https://github.com/tobyweed/totalistic_cellular_automata
+
+    CS 201 Final Project - Totalistic Cellular Automata
+    Danny Grubbs-Donovan and Toby Weed
 **/
 
 import java.applet.*;
@@ -45,7 +47,7 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
     // never again
     private int zoom = 5; //How many pixels is one edge of one cell
     private boolean random = false; //Should the first generation be randomized?
-    private int k = 4; //the number of possible states for each cell
+    private int k = 3; //the number of possible states for each cell
     private int ruleCode = 23324; //the decimal value of the rule code
     private String[] kAryRuleCode; //the k-ary value of the rule code
     private Vector<Integer> randomConfig = new Vector<Integer>(); //A vector of cell with random states
