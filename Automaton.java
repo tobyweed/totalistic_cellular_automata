@@ -63,7 +63,6 @@ public class Automaton {
     //number to binary, ternary etc. based on kval.
     public static String[] intToKAry(int code, int kVal) {
         String[] kCode = new String[(3*kVal-2)];
-        // int newCode = code + ((int)Math.pow(kVal,((3*kVal)-2))); //Get to center(ish) of ks
         for(int n = 0; n < kCode.length; n++) {
             String digit = Integer.toString((code/((int)Math.pow(kVal,n)))%kVal);
             kCode[kCode.length - n - 1] = digit;

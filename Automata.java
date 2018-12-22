@@ -104,6 +104,8 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
 
         // Decimal rule code slider and text field
         Label codeLabel = new Label("Decimal Rule Code:");
+        //This works in theory but in practice the max possible value for the
+        //slider/textbox combo is 2147483647
         int numPoss = (int)Math.pow(k,(3*k-2));
 
         decCodeSlider = new JSlider(JSlider.HORIZONTAL,0,numPoss,0); //slider for rule code entry
@@ -289,6 +291,8 @@ public class Automata extends Applet implements ActionListener, ChangeListener, 
 
         // update decCodeSlider maximum value and set current value to zero
         int numPoss = (int)Math.pow(k,(3*k-2));
+        //This works in theory but in practice the max possible value for the
+        //slider/textbox combo is 2147483647
         decCodeSlider.setMaximum(numPoss);
         decCodeSlider.setValue(0);
 
