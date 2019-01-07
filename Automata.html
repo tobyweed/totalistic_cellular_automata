@@ -1,33 +1,46 @@
 <html>
 <head>
-<title>Totalistic Cellular Automata</title>
+    <title>Totalistic Cellular Automata</title>
+
+    <link rel="stylesheet" href="automata.css">
 </head>
 <body>
-    <div>
-        <h1> 1-Dimensional Totalistic Cellular Automata</h1>
+    <div class="row">
+        <div id="left" class="col">
+            <h1> 1-Dimensional Totalistic Cellular Automata</h1>
 
-        <a href="http://mathworld.wolfram.com/TotalisticCellularAutomaton.html">
-        As described by Wolfram. </a>
+            <a href="http://mathworld.wolfram.com/TotalisticCellularAutomaton.html">
+            As described by Wolfram. </a>
 
-        <p>Use by choosing a number of colors, a rule code, and hitting run.</p>
-        <p>Try toggling random initialization, dragging the sliders from side to side,
-            and zooming all the way out. You can also hit the arrow keys (when the slider
-            is selected) to increment rule code by one).</p>
-        <p>Keep in mind that you are likely
-            witnessing automata that no one else has ever seen before!</p>
-        <p>Also note that with any number of colors higher than 5, you cannot
-            see all possible automata, as the number slider maxes out at 2147483647,
-            a number much smaller than the number of possible rule codes for k > 6
-            (given by k^(3k-2).</p>
-        <a href="https://github.com/tobyweed/totalistic_cellular_automata">
-        GitHub Repository. </a>
-        <p> Designed by Danny Grubbs-Donovan and Toby Weed. </p>
+            <p>Use by choosing a number of colors, a rule code, and hitting run.</p>
+            <p>Try toggling random initialization, dragging the sliders from side to side,
+                and zooming all the way out. You can also hit the arrow keys (when the slider
+                is selected) to increment rule code by one).</p>
+            <p>Keep in mind that you are likely
+                witnessing automata that no one else has ever seen before!</p>
+            <p>Also note that with any number of colors higher than 5, you cannot
+                see all possible automata, as the number slider maxes out at 2147483647,
+                a number much smaller than the number of possible rule codes for k > 6
+                (given by k^(3k-2).</p>
+            <a href="https://github.com/tobyweed/totalistic_cellular_automata">
+            GitHub Repository. </a>
+            <p> Designed by Danny Grubbs-Donovan and Toby Weed. </p>
+        </div>
+        <div id="right" class="col">
+            <applet code="Automata.class" width=800 height=460>
+                <div class="container">
+                    <b>Your browser does not seem to support Java applets.</b>
+                        Find instructions on enabling Java in your browser <a href="https://java.com/en/download/help/enable_browser.xml">here.</a>
+                        <br/>
+                        <br/>
+
+                        Alternatively, if you've got the Java Development Kit,
+                         try running <b class="code">appletviewer INSERT URL</b>
+                         in the command line.
+
+                </div>
+            </applet>
+        </div>
     </div>
-    <div>
-        <applet code="Automata.class" width=800 height=460>
-            <b>Your browser does not seem to support applets.</b>
-        </applet>
-    </div>
-
 </body>
 </html>
